@@ -1,1 +1,9 @@
 model_name: Example Model
+data: 
+- name: 'GAME_METADATA'
+  file_path : 'warehouse.pipelines.game_summary.game_summary'
+  function: game_outcomes
+  args: 
+    min_season: 2018
+    max_season: 2023
+
