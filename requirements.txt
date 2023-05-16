@@ -2,3 +2,4 @@ pandas
 numpy
 nfl_data_py
 ipykernel
+pyyaml
