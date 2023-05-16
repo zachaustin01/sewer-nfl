@@ -1,6 +1,33 @@
 import pandas as pd
 pd.options.mode.chained_assignment = None
 
+# players_involved(
+#     player_involvement_df=player_involvement_df,
+#     play_id=40.0,
+#     game_id = '2021_01_ARI_TEN',
+#     side = 'offense'
+# )
+
+def players_involved(player_involvement_df,
+                     play_id,
+                     game_id,
+                     side_var = 'variable',
+                     side = 'offense' # offense, defense, both
+                     ):
+    res = player_involvement_df[
+            (player_involvement_df['play_id']==play_id) & \
+            (player_involvement_df['game_id']==game_id)
+        ]
+
+    if side != 'both':
+        s = 'o' if side == 'offense' else 'd'
+        res = res[(res[side_var].astype(str).str[0] == s)]
+
+    return(
+        list(res.iloc[:,-1])
+    )
+    
+
 # player_involved(player_involvement_df=player_involvement_df,
 #                 play_id = 40.0,
 #                 game_id = '2021_01_ARI_TEN',
