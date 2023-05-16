@@ -1,1 +1,1 @@
-warehouse/notebooks/** linguist-vendored
+*.ipynb linguist-vendored
