@@ -1,9 +1,12 @@
 model_name: Example Model
 data: 
+- name: 'api_data'
+
 - name: 'GAME_METADATA'
   file_path : 'warehouse.pipelines.game_summary.game_summary'
   function: game_outcomes
-  args: 
+  args:
+    api_data: '$api_data'
     min_season: 2018
     max_season: 2023
 - name: 'YARDS_PER_RUSH'
