@@ -1,15 +1,30 @@
 import math as m
 import pandas as pd
 
+# Example of input_off_data used with default values below
+# |------|--------|------|---------|---------|----------|------------------|--------------------------|-------------------------|
+# |      | season | week | posteam | defteam | position | rusher_player_id | player_name              | z_epa                   |
+# |------|--------|------|---------|---------|----------|------------------|--------------------------|-------------------------|
+# |    0 |   2021 |    1 | ARI     | TEN     | QB       |       00-0035228 | Kyler Murray             |    -0.32008300916945287 |
+# |------|--------|------|---------|---------|----------|------------------|--------------------------|-------------------------|
+# ...
+#
+# Example of input_def_data used with default values below
+# |------|--------|------|---------|---------|----------|------------------------|
+# |      | season | week | posteam | defteam | position | z_epa                  |
+# |------|--------|------|---------|---------|----------|------------------------|
+# |    0 |   2021 |    1 | ARI     | TEN     | QB       |    -0.3047991929363788 |        
+
+
 def calculate_elo_metric(
     input_off_data,
     input_def_data,
-    order_cols = ['season','week'],
-    off_gb_cols = ['posteam','defteam','position','rusher_player_id','player_name'], # At what level are we AGGREGATING offensive performance
-    def_gb_cols = ['posteam','defteam','position'], # Unique level to AGGREGATE at for defense
-    off_lookup_values = ['position','rusher_player_id'], 
-    def_lookup_values = ['position','defteam'],
-    off_perf_col = 'z_epa_x',
+    order_cols = ['season','week'], # Should be standard
+    off_gb_cols = ['posteam','defteam','position','rusher_player_id','player_name'], # Unique level that perf col was aggregated at for offense
+    def_gb_cols = ['posteam','defteam','position'], # Unique level that perf col was aggregated at for defense
+    off_lookup_values = ['position','rusher_player_id'], # Update elo from most recent record matching what criteria
+    def_lookup_values = ['position','defteam'], # Update elo from most recent record matching what criteria
+    off_perf_col = 'z_epa_x', # Column with x extension will be whichever has more gb_cols between off and defense... offense if equal
     def_perf_col = 'z_epa_y', # Note: function assumes it is inverted on defense  
     
     elo_base = 2000 # Arbitrary value
