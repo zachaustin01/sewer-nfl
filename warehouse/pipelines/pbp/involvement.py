@@ -35,18 +35,20 @@ def players_involved(player_involvement_df,
 
 def player_involved(
     player_involvement_df,
-    play_id,
-    game_id,
-    player_id,
-    id_col = 'value'
+    player_id, # Required
+    play_id = None, # Optional
+    game_id = None, # Optional
+    id_col = 'value' # Required
 ):
     res = player_involvement_df[
-        (player_involvement_df['play_id']==play_id) & \
-        (player_involvement_df['game_id']==game_id) & \
         (player_involvement_df[id_col]==player_id) 
     ]
+    if play_id is not None:
+        res = res[(res['play_id']==play_id)]
+    if game_id is not None:
+        res = res[(res['game_id']==game_id)]
 
-    return len(res) > 0
+    return res
     
 
 # Function to generate a dataframe with involvement of offensive and defensive players
