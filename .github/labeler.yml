@@ -8,4 +8,4 @@ repo:
 
 # Add 'test' label to any change to *.spec.js files within the source dir
 test:
-- **notebooks/**
+- *notebooks/*
