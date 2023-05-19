@@ -110,3 +110,65 @@ passing_elo_df = calculate_elo_metric(
     elo_power = 1.7,
     elo_base = 2000
 )
+
+# Aggregate final DFs to model level
+agg_passing = passing_elo_df.groupby(['season','week','posteam','defteam','position'])\
+    .head(1).groupby(['season','week','posteam','defteam','position'])[['off_elo','def_elo']].mean().reset_index()
+df = pd.pivot_table(
+    agg_passing,
+    values = ['off_elo','def_elo'],
+    columns = 'position',
+    index = ['season','week','posteam','defteam']
+).reset_index()
+df.columns = [x[0] if x[1]=='' else f'{x[0]}_{x[1]}_pass' for x in df.columns]
+agg_passing = df
+agg_rushing = rushing_elo_df.groupby(['season','week','posteam','defteam','position'])\
+    .head(2).groupby(['season','week','posteam','defteam','position'])[['off_elo','def_elo']].mean().reset_index()
+df = pd.pivot_table(
+    agg_rushing,
+    values = ['off_elo','def_elo'],
+    columns = 'position',
+    index = ['season','week','posteam','defteam']
+).reset_index()
+df.columns = [x[0] if x[1]=='' else f'{x[0]}_{x[1]}_rush' for x in df.columns]
+agg_rushing = df
+agg_receiving = receiving_elo_df.groupby(['season','week','posteam','defteam','position'])\
+    .head(3).groupby(['season','week','posteam','defteam','position'])[['off_elo','def_elo']].mean().reset_index()
+df = pd.pivot_table(
+    agg_receiving,
+    values = ['off_elo','def_elo'],
+    columns = 'position',
+    index = ['season','week','posteam','defteam']
+).reset_index()
+df.columns = [x[0] if x[1]=='' else f'{x[0]}_{x[1]}_rec' for x in df.columns]
+agg_receiving = df
+
+game_data = pbp_api_data[META_COLUMNS].drop('posteam',axis = 1).drop_duplicates()
+
+all_elo = agg_passing.merge(
+    agg_receiving,
+    on = ['season','week','posteam','defteam'],
+    how = 'left'
+).merge(
+    agg_rushing,
+    on = ['season','week','posteam','defteam'],
+    how = 'left'
+)
+
+temp_df = pd.concat([game_data.merge(
+    all_elo,
+    how = 'left',
+    left_on = ['season','week','home_team','away_team'],
+    right_on = ['season','week','posteam','defteam']
+),
+game_data.merge(
+    all_elo,
+    how = 'left',
+    left_on = ['season','week','away_team','home_team'],
+    right_on = ['season','week','posteam','defteam']
+)]).sort_values(['season','week','home_team'])
+
+model_df = temp_df[temp_df['posteam']==temp_df['home_team']].merge(
+    temp_df[temp_df['posteam']==temp_df['away_team']],
+    on = ['game_id','old_game_id','season','week','home_team','away_team','spread_line']
+)
