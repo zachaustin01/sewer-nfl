@@ -22,7 +22,7 @@ roster_api_data = nflreadr.import_rosters(years=range(MIN_YEAR, MAX_YEAR + 1))
 
 receiving_off_epa , receiving_def_epa = pre_elo_epa(
     pbp_api = pbp_api_data,
-    roster_api = roster_api_data, 
+    roster_api = roster_api_data,
     position_filter = ['RB','WR','TE'],
     play_types = ['pass'],
     player_id_col = 'receiver_player_id',
@@ -53,7 +53,7 @@ receiving_elo_df = calculate_elo_metric(
 
 rushing_off_epa , rushing_def_epa = pre_elo_epa(
     pbp_api = pbp_api_data,
-    roster_api = roster_api_data, 
+    roster_api = roster_api_data,
     position_filter = ['QB','RB','WR','TE'],
     play_types = ['run'],
     player_id_col = 'rusher_player_id',
@@ -84,7 +84,7 @@ rushing_elo_df = calculate_elo_metric(
 
 passing_off_epa , passing_def_epa = pre_elo_epa(
     pbp_api = pbp_api_data,
-    roster_api = roster_api_data, 
+    roster_api = roster_api_data,
     position_filter = ['QB'],
     play_types = ['pass'],
     player_id_col = 'passer_player_id',
