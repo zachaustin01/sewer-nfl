@@ -28,6 +28,7 @@ def calculate_elo_metric(
     def_perf_col = 'z_epa_y', # Note: function assumes it is inverted on defense  
     elo_multiplier = 3,
     elo_power = 2,
+    elo_season_reset = 0.5,
     elo_base = 2000 # Arbitrary value
 ):
     off_df = input_off_data
@@ -85,6 +86,9 @@ def calculate_elo_metric(
             # If it is found in keys, set elo_val to the value
             if found: 
                 def_elo_val = caching_dict[def_tup] if not m.isnan(caching_dict[def_tup]) else elo_base  
+        # Reset ELO towards base if first appearance of season
+        if row['def_appearance'] == 1: def_elo_val = (def_elo_val - elo_base) * elo_season_reset + elo_base
+        if row['off_appearance'] == 1: off_elo_val = (off_elo_val - elo_base) * elo_season_reset + elo_base
         # Calculate ELO to update
         off_elo_val_next = off_elo_val + elo_adj(
             off_elo_val,

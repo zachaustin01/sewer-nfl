@@ -41,8 +41,8 @@ def pre_elo_epa(
     gb_cols_z = ['season','position'], # What is aggregate level for z score
     def_gb_cols = ['posteam','defteam','position'], # Matched up against what level on defense to AGGREGATE to
     perf_cols = ['epa'], # What are we assessing for ELO
-    off_appearance_columns = ['position','rusher_player_id'],
-    def_appearance_columns = ['defteam','position']
+    off_appearance_columns = ['position','rusher_player_id','season'],
+    def_appearance_columns = ['defteam','position','season']
 
 
 ):
@@ -76,7 +76,7 @@ def pre_elo_epa(
     for col in perf_cols:
         def_epa_dataset[f'z_{col}'] = def_epa_dataset.groupby(order_cols + gb_cols_z)[col].transform(lambda x : zscore(x))
     def_epa_dataset.drop(perf_cols, axis = 1, inplace = True)
-    def_epa_dataset['def_appearance'] = def_epa_dataset.sort_values(order_cols).groupby(def_appearance_columns)['posteam'].cumcount() + 1
-    off_epa_dataset['off_appearance'] = off_epa_dataset.sort_values(order_cols).groupby(off_appearance_columns)['defteam'].cumcount() + 1
+    def_epa_dataset['def_appearance'] = def_epa_dataset.sort_values(order_cols).groupby(def_appearance_columns).cumcount() + 1
+    off_epa_dataset['off_appearance'] = off_epa_dataset.sort_values(order_cols).groupby(off_appearance_columns).cumcount() + 1
     
     return off_epa_dataset, def_epa_dataset
