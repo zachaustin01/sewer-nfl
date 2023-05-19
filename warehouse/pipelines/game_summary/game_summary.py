@@ -1,4 +1,5 @@
-import pandas as pd
+"""Docstring"""
 
-def game_outcomes(args = {}):
+def game_outcomes(args = {'arg':'value'}):
+    """Function Docstring"""
     return args

@@ -1,5 +1,4 @@
 import math as m
-import pandas as pd
 
 # Example of input_off_data used with default values below
 # |------|--------|------|---------|---------|----------|------------------|--------------------------|-------------------------|
@@ -13,21 +12,29 @@ import pandas as pd
 # |------|--------|------|---------|---------|----------|------------------------|
 # |      | season | week | posteam | defteam | position | z_epa                  |
 # |------|--------|------|---------|---------|----------|------------------------|
-# |    0 |   2021 |    1 | ARI     | TEN     | QB       |    -0.3047991929363788 |        
+# |    0 |   2021 |    1 | ARI     | TEN     | QB       |    -0.3047991929363788 |
 
 
 def calculate_elo_metric(
     input_off_data,
     input_def_data,
     order_cols = ['season','week'], # Should be standard
-    off_gb_cols = ['posteam','defteam','position','rusher_player_id','player_name'], # Unique level that perf col was aggregated at for offense
-    def_gb_cols = ['posteam','defteam','position'], # Unique level that perf col was aggregated at for defense
-    off_lookup_values = ['position','rusher_player_id'], # Update elo from most recent record matching what criteria
-    def_lookup_values = ['position','defteam'], # Update elo from most recent record matching what criteria
-    off_perf_col = 'z_epa_x', # Column with x extension will be whichever has more gb_cols between off and defense... offense if equal
-    def_perf_col = 'z_epa_y', # Note: function assumes it is inverted on defense  
+    # Unique level that perf col was aggregated at for offense
+    off_gb_cols = ['posteam','defteam','position','rusher_player_id','player_name'],
+    # Unique level that perf col was aggregated at for defense
+    def_gb_cols = ['posteam','defteam','position'],
+    # Update elo from most recent record matching what criteria
+    off_lookup_values = ['position','rusher_player_id'],
+    # Update elo from most recent record matching what criteria
+    def_lookup_values = ['position','defteam'],
+    # Column with x extension will be whichever has more gb_cols between off and defense...
+    # offense if equal
+    off_perf_col = 'z_epa_x',
+    # Note: function assumes it is inverted on defense
+    def_perf_col = 'z_epa_y',
     elo_multiplier = 3,
     elo_power = 2,
+    elo_season_reset = 0.5,
     elo_base = 2000 # Arbitrary value
 ):
     off_df = input_off_data
@@ -64,7 +71,7 @@ def calculate_elo_metric(
             ret = (multiplier_units)**power
         def_ret = ret * abs(z_perf)
         return (off_ret + def_ret) / 2
-    
+
     elo_df = elo_df.sort_values(by = order_cols)
 
     for index, row in elo_df.iterrows():
@@ -76,31 +83,38 @@ def calculate_elo_metric(
             # Check if tup in keys of caching_dict
             found = off_tup in caching_dict.keys()
             # If it is found in keys, set elo_val to the value
-            if found: 
-                off_elo_val = caching_dict[off_tup] if not m.isnan(caching_dict[off_tup]) else elo_base
+            if found:
+                off_elo_val = caching_dict[off_tup] if not m.isnan(caching_dict[off_tup]) \
+                    else elo_base
         if row['def_elo'] is None:
             def_tup = tuple([row[key] for key in def_lookup_values] + ['def'])
             # Check if tup in keys of caching_dict
             found = def_tup in caching_dict.keys()
             # If it is found in keys, set elo_val to the value
-            if found: 
-                def_elo_val = caching_dict[def_tup] if not m.isnan(caching_dict[def_tup]) else elo_base  
+            if found:
+                def_elo_val = caching_dict[def_tup] if not m.isnan(caching_dict[def_tup]) \
+                    else elo_base
+        # Reset ELO towards base if first appearance of season
+        if row['def_appearance'] == 1: def_elo_val = (def_elo_val - elo_base) * elo_season_reset + \
+            elo_base
+        if row['off_appearance'] == 1: off_elo_val = (off_elo_val - elo_base) * elo_season_reset + \
+            elo_base
         # Calculate ELO to update
         off_elo_val_next = off_elo_val + elo_adj(
             off_elo_val,
-            def_elo_val, 
+            def_elo_val,
             z_perf = row[off_perf_col],
             multiplier_units=elo_multiplier,
             power=elo_power
         )
         def_elo_val_next = def_elo_val + elo_adj(
             def_elo_val,
-            off_elo_val, 
+            off_elo_val,
             z_perf = row[def_perf_col],
             multiplier_units=elo_multiplier,
             power=elo_power
         )
-        
+
         elo_df.at[index, 'off_elo'] = off_elo_val
         elo_df.at[index, 'def_elo'] = def_elo_val
         elo_df.at[index, 'off_elo_next'] = off_elo_val_next

@@ -1,3 +1,5 @@
+"""Module Docstring"""
+
 import pandas as pd
 pd.options.mode.chained_assignment = None
 
@@ -14,6 +16,7 @@ def players_involved(player_involvement_df,
                      side_var = 'variable',
                      side = 'offense' # offense, defense, both
                      ):
+    """Function Docstring"""
     res = player_involvement_df[
             (player_involvement_df['play_id']==play_id) & \
             (player_involvement_df['game_id']==game_id)
@@ -26,7 +29,7 @@ def players_involved(player_involvement_df,
     return(
         list(res.iloc[:,-1])
     )
-    
+
 
 # player_involved(player_involvement_df=player_involvement_df,
 #                 play_id = 40.0,
@@ -40,8 +43,9 @@ def player_involved(
     game_id = None, # Optional
     id_col = 'value' # Required
 ):
+    """Function Docstring"""
     res = player_involvement_df[
-        (player_involvement_df[id_col]==player_id) 
+        (player_involvement_df[id_col]==player_id)
     ]
     if play_id is not None:
         res = res[(res['play_id']==play_id)]
@@ -49,12 +53,13 @@ def player_involved(
         res = res[(res['game_id']==game_id)]
 
     return res
-    
+
 
 # Function to generate a dataframe with involvement of offensive and defensive players
 def player_involvement(
     pbp_data
 ):
+    """Function Docstring"""
     columns = [
         'play_id',
         'game_id',
@@ -75,7 +80,7 @@ def player_involvement(
     reduced_data.drop(['offense_players','defense_players'],
                       axis = 1,
                       inplace = True)
-    
+
 
     return(
         pd.melt(
