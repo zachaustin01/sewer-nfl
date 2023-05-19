@@ -1,34 +1,24 @@
+"""Module Docstring"""
+import sys
+import os
+
+REPO_NAME = 'sewer-nfl'
+CWD = str(os.getcwd())
+REPO_DIR = CWD[:CWD.find(REPO_NAME)+len(REPO_NAME)]
+sys.path.insert(0,REPO_DIR)
+import pandas as pd
+import nfl_data_py as nflreadr
+from warehouse.pipelines.pbp.epa import pre_elo_epa, META_COLUMNS
+from warehouse.utilities.elo import calculate_elo_metric
+
 MIN_YEAR = 2010
 MAX_YEAR = 2022
 MAX_WEEK = 18
-
-REPO_NAME = 'sewer-nfl'
-import sys, os
-cwd = str(os.getcwd())
-repo_dir = cwd[:cwd.find(REPO_NAME)+len(REPO_NAME)]
-sys.path.insert(0,repo_dir)
-
-import pandas as pd
-import nfl_data_py as nflreadr
-from warehouse.pipelines.pbp.epa import pre_elo_epa
-from warehouse.utilities.elo import calculate_elo_metric
 
 pbp_api_data = nflreadr.import_pbp_data(range(MIN_YEAR,MAX_YEAR + 1))
 pbp_api_data = pbp_api_data[pbp_api_data['week']<=MAX_WEEK]
 
 roster_api_data = nflreadr.import_rosters(years=range(MIN_YEAR, MAX_YEAR + 1))
-
-
-META_COLUMNS = [
-    'game_id',
-    'old_game_id',
-    'season',
-    'week',
-    'home_team',
-    'away_team',
-    'posteam',
-    'spread_line'
-]
 
 # Receiving
 
