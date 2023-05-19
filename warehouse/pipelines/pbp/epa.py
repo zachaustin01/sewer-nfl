@@ -1,4 +1,7 @@
-# Functions to gather EPA metrics from play by play data
+from scipy.stats import zscore
+import pandas as pd
+
+#  Functions to gather EPA metrics from play by play data
 
 R_COLUMNS = [
     'season',
@@ -7,6 +10,17 @@ R_COLUMNS = [
     'position',
     'player_name',
     'player_id'
+]
+
+META_COLUMNS = [
+    'game_id',
+    'old_game_id',
+    'season',
+    'week',
+    'home_team',
+    'away_team',
+    'posteam',
+    'spread_line'
 ]
 
 BASE_DATA_COLS = [
@@ -34,8 +48,8 @@ def pre_elo_epa(
 ):
     off_gb_cols = off_gb_cols + [player_id_col]
 
-    epa_dataset = pbp_api[BASE_DATA_COLS + [player_id_col]]
-    mask = (epa_dataset['play_type'] == play_types)
+    epa_dataset = pbp_api[BASE_DATA_COLS + META_COLUMNS + [player_id_col]]
+    mask = (epa_dataset['play_type'].isin( play_types))
     epa_dataset = epa_dataset.loc[mask].merge(
         roster_api[[
             'player_name',
