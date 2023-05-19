@@ -26,7 +26,8 @@ def calculate_elo_metric(
     def_lookup_values = ['position','defteam'], # Update elo from most recent record matching what criteria
     off_perf_col = 'z_epa_x', # Column with x extension will be whichever has more gb_cols between off and defense... offense if equal
     def_perf_col = 'z_epa_y', # Note: function assumes it is inverted on defense  
-    
+    elo_multiplier = 3,
+    elo_power = 2,
     elo_base = 2000 # Arbitrary value
 ):
     off_df = input_off_data
@@ -45,8 +46,24 @@ def calculate_elo_metric(
 
     caching_dict = {}
 
-    def elo_multiplier(elo_1, elo_2, power = 1.1, multiplier = 10):
-        return (elo_1 / elo_2) ** power * multiplier
+    def elo_adj(elo_1, elo_2, z_perf ,multiplier_units = 10, power = 2):
+        # How much would I win / lose betting on offense?
+        odds = elo_2 / elo_1
+        win = 1 if z_perf > 0 else 0
+        if win == 1:
+            ret = (odds * multiplier_units)**power
+        else:
+            ret = -1 * (multiplier_units)**power
+        off_ret = ret * abs(z_perf)
+        # How much would I win / lose taking a bet on the defense?
+        odds = elo_1 / elo_2
+        win = 1 if z_perf < 0 else 0
+        if win == 1:
+            ret = -1 * (odds * multiplier_units)**power
+        else:
+            ret = (multiplier_units)**power
+        def_ret = ret * abs(z_perf)
+        return (off_ret + def_ret) / 2
     
     elo_df = elo_df.sort_values(by = order_cols)
 
@@ -69,8 +86,20 @@ def calculate_elo_metric(
             if found: 
                 def_elo_val = caching_dict[def_tup] if not m.isnan(caching_dict[def_tup]) else elo_base  
         # Calculate ELO to update
-        off_elo_val_next = elo_multiplier(off_elo_val, def_elo_val) * row[off_perf_col] + off_elo_val
-        def_elo_val_next = -1 * elo_multiplier(def_elo_val, off_elo_val) * row[def_perf_col] + def_elo_val
+        off_elo_val_next = off_elo_val + elo_adj(
+            off_elo_val,
+            def_elo_val, 
+            z_perf = row[off_perf_col],
+            multiplier_units=elo_multiplier,
+            power=elo_power
+        )
+        def_elo_val_next = def_elo_val + elo_adj(
+            def_elo_val,
+            off_elo_val, 
+            z_perf = row[def_perf_col],
+            multiplier_units=elo_multiplier,
+            power=elo_power
+        )
         
         elo_df.at[index, 'off_elo'] = off_elo_val
         elo_df.at[index, 'def_elo'] = def_elo_val
