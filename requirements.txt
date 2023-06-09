@@ -5,3 +5,7 @@ ipykernel
 scipy
 requests
 functools
+pyyaml
+matplotlib
+xgboost
+scikit-learn
