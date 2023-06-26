@@ -199,3 +199,35 @@ def get_team_hhi(api_data, trailing_weeks = 5):
 
     return(output_df)
 
+
+def get_hhi_by_type(api_data, trailing_weeks = 5,
+                    play_type = "pass" # can be pass or run
+                    ):
+
+
+    player_yards = api_data[(api_data['play_type']==play_type)]\
+        .groupby(['season','week','posteam','fantasy_player_name'], as_index=False)['yards_gained']\
+            .sum().rename(columns={'yards_gained':'player_yards_gained'})
+
+    team_yards = api_data[(api_data['play_type']==play_type)]\
+        .groupby(['season','week','posteam'], as_index=False)['yards_gained']\
+            .sum()
+
+    merged_df = pd.merge(player_yards, team_yards, on=['season','week','posteam'])
+
+    merged_df['percent_team_yards'] = merged_df['player_yards_gained']/merged_df['yards_gained']
+    merged_df['percent_team_yards_sq'] = merged_df['percent_team_yards']**2
+
+    merged_df = merged_df.groupby(['season','week','posteam'], as_index=False)['percent_team_yards_sq']\
+        .sum().sort_values(by=['season','posteam','week'])
+
+    if play_type == 'run': play_type = 'rush'
+    c_name = f'team_{play_type}ing_HHI'
+
+    output_df = merged_df.assign(team_passing_HHI = merged_df\
+                                 .groupby(['season','posteam'], as_index=False)['percent_team_yards_sq']\
+                                    .rolling(trailing_weeks).mean().rename(columns={'percent_team_yards_sq':'HHI'})\
+                                        ['HHI'])[['season','week','posteam',c_name]]
+
+    return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
+
