@@ -9,3 +9,7 @@ pyyaml
 matplotlib
 xgboost
 scikit-learn
+tensorflow
+tensorflow_probability
+lazypredict
+
