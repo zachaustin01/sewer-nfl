@@ -8,7 +8,7 @@ REPO_DIR = CWD[:CWD.find(REPO_NAME)+len(REPO_NAME)]
 sys.path.insert(0,REPO_DIR)
 import pandas as pd
 import nfl_data_py as nflreadr
-from warehouse.pipelines.pbp.epa import pre_elo_epa, META_COLUMNS
+from warehouse.pipelines.pbp.performance import pre_elo_epa, META_COLUMNS
 from warehouse.utilities.elo import calculate_elo_metric
 
 MIN_YEAR = 2010
