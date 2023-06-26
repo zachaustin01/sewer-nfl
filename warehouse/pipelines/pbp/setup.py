@@ -40,4 +40,4 @@ def setup_pbp(
                          right_on=['season','week', 'posteam']).drop(['posteam'], axis=1)
                          for key, value in ngs.items()}
 
-    return ngs
+    return api_data, ngs

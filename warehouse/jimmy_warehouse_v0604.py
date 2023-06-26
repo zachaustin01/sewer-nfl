@@ -1,16 +1,13 @@
 import scipy as scipy
 import numpy as np
 import pandas as pd
-import nfl_data_py as nflreadr
-import requests as requests
-import functools as ft
 
 #
 # yards per carry
 
 def get_yards_per_rush(api_data, trailing_weeks=5):
-    
-    
+
+
     yy = pd.DataFrame(api_data[api_data['play_type']=='run'].
                       groupby(['season','week','posteam'], as_index=False).agg({
                           'yards_gained':'sum', 'play_counter':'size'
@@ -22,7 +19,7 @@ def get_yards_per_rush(api_data, trailing_weeks=5):
     yy = yy.reset_index(drop=True)
 
     yy['calc_ypc']=pd.DataFrame(yy.groupby(['season','posteam'], as_index=False)['yards_per_carry'].rolling(trailing_weeks).mean())['yards_per_carry']
-    # df['week'] = df.groupby(['season','posteam']).cumcount() +1 
+    # df['week'] = df.groupby(['season','posteam']).cumcount() +1
 
     return(yy[['season','week','posteam','calc_ypc']].rename(columns={'calc_ypc':'yards_per_carry', 'posteam':'team'}))
 
@@ -30,8 +27,8 @@ def get_yards_per_rush(api_data, trailing_weeks=5):
 # yards per pass
 
 def get_yards_per_pass(api_data, trailing_weeks=5):
-    
-    
+
+
     yy = pd.DataFrame(api_data[api_data['play_type']=='pass'].
                       groupby(['season','week','posteam'], as_index=False).agg({
                           'yards_gained':'sum', 'play_counter':'size'
@@ -43,7 +40,7 @@ def get_yards_per_pass(api_data, trailing_weeks=5):
     yy = yy.reset_index(drop=True)
 
     yy['calc_ypc']=pd.DataFrame(yy.groupby(['season','posteam'], as_index=False)['yards_per_pass'].rolling(trailing_weeks).mean())['yards_per_pass']
-    # df['week'] = df.groupby(['season','posteam']).cumcount() +1 
+    # df['week'] = df.groupby(['season','posteam']).cumcount() +1
 
     return(yy[['season','week','posteam','calc_ypc']].rename(columns={'calc_ypc':'yards_per_pass', 'posteam':'team'}))
 
@@ -90,7 +87,7 @@ def get_pct_pass(api_data, trailing_weeks = 5):
     just_pass = just_pass.assign(pct_pass = just_pass.
                      groupby(['season','posteam'], as_index=False)['proportion'].
                      rolling(trailing_weeks).mean()['proportion'])[['season','week','posteam','pct_pass']].reset_index(drop=True)
-    
+
     return(just_pass.rename(columns={'posteam':'team'}))
 
 
@@ -127,7 +124,7 @@ def get_team_hhi(api_data, trailing_weeks = 5):
     output_df = merged_df.assign(team_HHI = merged_df.groupby(['season','posteam'], as_index=False)['percent_team_yards_sq'].rolling(trailing_weeks).mean().rename(columns={'percent_team_yards_sq':'HHI'})['HHI'])[['season','week','posteam','team_HHI']]
 
     output_df = output_df.rename(columns={'posteam':'team'}).reset_index(drop=True)
-    
+
     return(output_df)
 
 
@@ -150,7 +147,7 @@ def get_passing_hhi(api_data, trailing_weeks = 5):
 
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
-    
+
 # rushing HHI
 
 def get_rush_hhi(api_data, trailing_weeks = 5):
@@ -186,7 +183,7 @@ def get_def_yards_per_pass(api_data, trailing_weeks = 5):
     yy = yy.reset_index(drop=True)
 
     yy['calc_ypc']=pd.DataFrame(yy.groupby(['season','defteam'], as_index=False)['def_yards_per_pass'].rolling(trailing_weeks).mean())['def_yards_per_pass']
-    # df['week'] = df.groupby(['season','posteam']).cumcount() +1 
+    # df['week'] = df.groupby(['season','posteam']).cumcount() +1
 
     output_df = yy[['season','week','defteam','calc_ypc']].rename(columns={'calc_ypc':'def_yards_per_pass'})
 
@@ -210,7 +207,7 @@ def get_def_yards_per_rush(api_data, trailing_weeks = 5):
     yy = yy.reset_index(drop=True)
 
     yy['calc_ypc']=pd.DataFrame(yy.groupby(['season','defteam'], as_index=False)['yards_per_rush'].rolling(trailing_weeks).mean())['yards_per_rush']
-    # df['week'] = df.groupby(['season','posteam']).cumcount() +1 
+    # df['week'] = df.groupby(['season','posteam']).cumcount() +1
 
     output_df = yy[['season','week','defteam','calc_ypc']].rename(columns={'calc_ypc':'def_yards_per_rush'})
 
@@ -386,7 +383,7 @@ def get_pct_leading(api_data, trailing_weeks = 5):
 def get_pct_leading_three(api_data, trailing_weeks = 5):
 
     num = 3
-    
+
     api_data['posteam_lead'] = api_data['posteam_score'] - api_data['defteam_score']
 
     api_data['team_lead_three'] = np.where(api_data['posteam_lead']>(num), api_data['posteam'], "NEUTRAL")
@@ -415,7 +412,7 @@ def get_pct_leading_three(api_data, trailing_weeks = 5):
 def get_pct_leading_seven(api_data, trailing_weeks = 5):
 
     num = 7
-    
+
     api_data['posteam_lead'] = api_data['posteam_score'] - api_data['defteam_score']
 
     api_data['team_lead_seven'] = np.where(api_data['posteam_lead']>(num), api_data['posteam'], "NEUTRAL")
@@ -495,7 +492,7 @@ def get_actual_game_points(api_data, trailing_weeks = 5):
 # getting EPA sum
 
 def get_epa_sum(api_data, trailing_weeks = 5):
-    
+
     return(api_data[api_data['play_type'].isin(['run','pass'])].groupby(['season','week','posteam'], as_index=False)[['epa']].sum().rename(columns = {'posteam':'team', 'epa':'off_epa'}))
 
 # QB aggressiveness by team
@@ -636,7 +633,7 @@ def get_off_scr(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(team_scr = mid_df.groupby(['season','posteam'], as_index=False)['series_success'].rolling(trailing_weeks).mean()['series_success'])[['season','week','posteam','team_scr']]
 
 #    output_df.groupby(['season','posteam'], as_index =False)['team_scr'].mean().sort_values(by=['team_scr'])
-    
+
     return(output_df.rename(columns = {'posteam':'team'}))
 
 
@@ -653,7 +650,7 @@ def get_def_scr_allowed(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(defteam_scr = mid_df.groupby(['season','defteam'], as_index=False)['series_success'].rolling(trailing_weeks).mean()['series_success'])[['season','week','defteam','defteam_scr']]
 
     # output_df.groupby(['season','defteam'], as_index =False)['defteam_scr'].mean().sort_values(by=['defteam_scr'])
-    
+
     return(output_df.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 
@@ -669,7 +666,7 @@ def get_qb_comp_rate(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(off_qb_comp = mid_df.groupby(['season','posteam'], as_index=False)['completion_rate'].rolling(trailing_weeks).mean()['completion_rate'])[['season','week','posteam','off_qb_comp']]
 
     # output_df.groupby(['season','posteam'], as_index=False)['off_qb_comp'].mean().sort_values(by=['off_qb_comp'])
-    
+
     return(output_df.rename(columns = {'posteam':'team'}))
 
 
@@ -696,7 +693,7 @@ def qb_hits_allowed_off(api_data, trailing_weeks = 5):
     mid_df = api_data.groupby(['season','week','posteam'], as_index=False)[['qb_hit','play_counter']].sum()
     mid_df['qb_hitrate'] = mid_df['qb_hit']/mid_df['play_counter']
     mid_df = mid_df.sort_values(by=['season','posteam','week'])
-    
+
     # left join here
     join_data = api_data[['season','week','posteam']].drop_duplicates().reset_index(drop=True).sort_values(by=['season','posteam','week'])
     join_data = join_data[join_data[['posteam']].notnull().all(1)]
@@ -707,7 +704,7 @@ def qb_hits_allowed_off(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(off_qbhit = mid_df.groupby(['season','posteam'], as_index=False)['qb_hitrate'].rolling(trailing_weeks).mean()['qb_hitrate'])[['season','week','posteam','off_qbhit']]
 
     # output_df.groupby(['season','posteam'], as_index=False)['off_qbhit'].mean().sort_values(by=['off_qbhit'])
-    
+
     return(output_df.rename(columns = {'posteam':'team'}))
 
 
@@ -719,19 +716,19 @@ def get_def_qb_hits(api_data, trailing_weeks = 5):
     mid_df = api_data.groupby(['season','week','defteam'], as_index=False)[['qb_hit','play_counter']].sum()
     mid_df['qb_hitrate'] = mid_df['qb_hit']/mid_df['play_counter']
     mid_df = mid_df.sort_values(by=['season','defteam','week'])
-    
+
     # left join here
     join_data = api_data[['season','week','defteam']].drop_duplicates().reset_index(drop=True).sort_values(by=['season','defteam','week'])
     join_data = join_data[join_data[['defteam']].notnull().all(1)]
 
     mid_df = join_data.merge(mid_df, how='left', on=['season','week','defteam']).replace(np. nan,0)
     # ----------
-    
+
 
     output_df = mid_df.assign(def_qbhit = mid_df.groupby(['season','defteam'], as_index=False)['qb_hitrate'].rolling(trailing_weeks).mean()['qb_hitrate'])[['season','week','defteam','def_qbhit']]
 
     # output_df.groupby(['season','defteam'], as_index=False)['def_qbhit'].mean().sort_values(by=['def_qbhit'])
-    
+
     return(output_df.reset_index(drop=True).rename(columns={'defteam':'team'}))
 
 
@@ -750,7 +747,7 @@ def get_season_point_diff(api_data):
 
     # output_df.sort_values(by=['score_diff'])
 
-    
+
     return(output_df)
 
 # points on the opening drive of a game
@@ -766,7 +763,7 @@ def get_first_drive_points_scored(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(first_drive_pts_avg = mid_df.groupby(['season','posteam'], as_index=False)['points_scored'].rolling(trailing_weeks).mean()['points_scored'])[['season','week','posteam','first_drive_pts_avg']]
 
     # output_df.groupby(['season','posteam'], as_index=False)['first_drive_pts_avg'].mean().sort_values(by=['first_drive_pts_avg'])
-    
+
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
 
@@ -809,7 +806,7 @@ def get_yac_air_yards(api_data, trailing_weeks = 5):
 # points on the opening drive of the second half
 
 def get_2h_first_drive_points_scored(api_data, trailing_weeks = 5):
-    
+
     api_data = api_data[api_data['game_half']=='Half2']
 
     mid_df = api_data[['season','week','posteam', 'drive','fixed_drive_result']].drop_duplicates().reset_index(drop=True)
@@ -821,14 +818,14 @@ def get_2h_first_drive_points_scored(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(h2_first_drive_pts_avg = mid_df.groupby(['season','posteam'], as_index=False)['points_scored'].rolling(trailing_weeks).mean()['points_scored'])[['season','week','posteam','h2_first_drive_pts_avg']]
 
     # output_df.groupby(['season','posteam'], as_index=False)['first_drive_pts_avg'].mean().sort_values(by=['first_drive_pts_avg'])
-    
+
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
 
 # points ALLOWED first drive of 2h
 
 def get_2h_def_first_drive_points_allowed(api_data, trailing_weeks = 5):
-    
+
     api_data = api_data[api_data['game_half']=='Half2']
 
     mid_df = api_data[['season','week','defteam', 'drive','fixed_drive_result']].drop_duplicates().reset_index(drop=True)
