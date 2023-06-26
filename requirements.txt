@@ -2,11 +2,14 @@ pandas
 numpy
 nfl_data_py
 ipykernel
-pyyaml
 scipy
+requests
+functools
+pyyaml
 matplotlib
 xgboost
 scikit-learn
 tensorflow
 tensorflow_probability
 lazypredict
+
