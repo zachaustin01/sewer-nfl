@@ -1,8 +1,5 @@
-import numpy as np
-import pandas as pd
+
 import nfl_data_py as nflreadr
-import requests as requests
-import functools as ft
 
 def setup_pbp(
         only_regular_season = True,
