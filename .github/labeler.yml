@@ -2,10 +2,12 @@
 repo:
 - '*'
 
-# Add '@domain/core' label to any change within the 'core' package
 '@warehouse':
 - warehouse/*
 
-# Add 'test' label to any change to *.spec.js files within the source dir
 test:
-- '**/*.ipynb'
+- *.ipynb
+
+catalog:
+- *config.py
+- *catalog.py
