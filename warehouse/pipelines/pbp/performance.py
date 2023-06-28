@@ -6,6 +6,7 @@ play by play data.
 
 from scipy.stats import zscore
 import pandas as pd
+import numpy as np
 
 #  Functions to gather EPA metrics from play by play data
 

@@ -184,38 +184,52 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         ]
     },
+    'get_epa_sum':{
+        'func': get_epa_sum,
+        'params':[
+            pbp_api_data,
+            TRAILING_WEEKS
+        ]
+    },
+    'get_qb_aggr':{
+        'func': get_qb_aggr,
+        'params':[
+            ngs['passing'],
+            TRAILING_WEEKS
+        ]
+    },
     'get_def_qb_aggr':{
         'func': get_def_qb_aggr,
         'params':[
-            pbp_api_data,
+            ngs['passing'],
             TRAILING_WEEKS
         ]
     },
     'get_def_box_stuff':{
         'func': get_def_box_stuff,
         'params':[
-            pbp_api_data,
+            ngs['rushing'],
             TRAILING_WEEKS
         ]
     },
     'get_def_cushion':{
         'func': get_def_cushion,
         'params':[
-            pbp_api_data,
+            ngs['receiving'],
             TRAILING_WEEKS
         ]
     },
     'get_def_separation':{
         'func': get_def_separation,
         'params':[
-            pbp_api_data,
+            ngs['receiving'],
             TRAILING_WEEKS
         ]
     },
     'get_avg_throw_dist':{
         'func': get_avg_throw_dist,
         'params':[
-            pbp_api_data,
+            ngs['passing'],
             TRAILING_WEEKS
         ]
     },
@@ -292,8 +306,7 @@ FUNCTION_CATALOG = {
     'get_season_point_diff':{
         'func': get_season_point_diff,
         'params':[
-            pbp_api_data,
-            TRAILING_WEEKS
+            pbp_api_data
         ]
     },
     'get_first_drive_points_scored':{
