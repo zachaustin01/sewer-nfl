@@ -6,8 +6,8 @@ repo:
 - 'warehouse/*'
 
 test:
-- '*.ipynb'
+- 'warehouse/notebooks/*.ipynb'
 
 catalog:
-- '*config.py'
-- '*catalog.py'
+- 'warehouse/config.py'
+- 'warehouse/catalog.py'
