@@ -805,8 +805,8 @@ def get_season_point_diff(api_data):
 
     mid_df = (pd.concat([h_teams, a_teams], axis=0)).sort_values(by=['season','team','week'])
 
-    output_df = mid_df.groupby(['season','team'], as_index=False)['score_diff'].sum()
-
+    mid_df['score_diff'] = mid_df.groupby(['season','team','week'], as_index=False)['score_diff'].cumsum()
+    output_df = mid_df
     # output_df.sort_values(by=['score_diff'])
 
 
