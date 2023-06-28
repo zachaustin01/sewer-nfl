@@ -3,11 +3,11 @@ repo:
 - '*'
 
 '@warehouse':
-- warehouse/*
+- 'warehouse/*'
 
 test:
-- *.ipynb
+- '*.ipynb'
 
 catalog:
-- *config.py
-- *catalog.py
+- '*config.py'
+- '*catalog.py'
