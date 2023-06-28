@@ -15,18 +15,76 @@ from warehouse.pipelines.pbp.setup import setup_pbp
 
 # Import pipelines
 from warehouse.pipelines.pbp.involvement import *
+from warehouse.pipelines.pbp.performance import *
 
+# Import config
+from warehouse.config import *
 
-
-REQUIREMENTS_CATALOG = {
-    'pbp_api_data':{
-        'type' : 'dataset',
-        'value' : setup_pbp
-    }
-}
 
 FUNCTION_CATALOG = {
-    'players_involved':{
-        'func': players_involved
+    # Performance
+    'get_yards_per_rush':{
+        'func': get_yards_per_rush,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_yards_per_pass':{
+        'func': get_yards_per_pass,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_epa_per_rush':{
+        'func': get_epa_per_rush,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_epa_per_pass':{
+        'func': get_epa_per_pass,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_offense_epa':{
+        'func': get_offense_epa,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_pct_pass':{
+        'func': get_pct_pass,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_pct_run':{
+        'func': get_pct_run,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_team_hhi':{
+        'func': get_team_hhi,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'get_hhi_by_type':{
+        'func': get_hhi_by_type,
+        'params':[
+            pbp_api_data,
+            TRAILING_WEEKS
+        ]
     }
+
 }
