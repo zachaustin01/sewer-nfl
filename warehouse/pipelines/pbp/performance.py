@@ -7,7 +7,8 @@ play by play data.
 from scipy.stats import zscore
 import pandas as pd
 import numpy as np
-import functools
+from cacheout import Cache
+cache = Cache()
 
 #  Functions to gather EPA metrics from play by play data
 
@@ -38,7 +39,7 @@ BASE_DATA_COLS = [
     'epa'
 ]
 
-@functools.cache
+@cache.memoize()
 def pre_elo_epa(
     pbp_api,
     roster_api,
@@ -100,7 +101,7 @@ def pre_elo_epa(
 # Pipeline functions for modular tasks
 # Functions are built off api_data and other advanced stats generated in setup.py
 
-@functools.cache
+@cache.memoize()
 def get_yards_per_rush(api_data, trailing_weeks=5):
     '''
     Yards per rush at team level
@@ -116,7 +117,7 @@ def get_yards_per_rush(api_data, trailing_weeks=5):
     # df['week'] = df.groupby(['season','posteam']).cumcount() +1
     return(yy[['season','week','posteam','calc_ypc']].rename(columns={'calc_ypc':'yards_per_carry', 'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_yards_per_pass(api_data, trailing_weeks=5):
     '''
     Yards per pass at team level
@@ -132,7 +133,7 @@ def get_yards_per_pass(api_data, trailing_weeks=5):
     # df['week'] = df.groupby(['season','posteam']).cumcount() +1
     return(yy[['season','week','posteam','calc_ypc']].rename(columns={'calc_ypc':'yards_per_pass', 'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_epa_per_rush(api_data, trailing_weeks = 5):
     '''
     EPA per rush at team level
@@ -141,7 +142,7 @@ def get_epa_per_rush(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(epa_per_rush = mid_df.groupby(['season','posteam'], as_index=False)['epa'].rolling(trailing_weeks).sum()['epa'])[['season','week','posteam','epa_per_rush']]
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_epa_per_pass(api_data, trailing_weeks = 5):
     '''
     EPA per pass at team level
@@ -150,7 +151,7 @@ def get_epa_per_pass(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(epa_per_pass = mid_df.groupby(['season','posteam'], as_index=False)['epa'].rolling(trailing_weeks).sum()['epa'])[['season','week','posteam','epa_per_pass']]
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_offense_epa(api_data, trailing_weeks = 5):
     '''
     Overall EPA (rush and pass) at team level
@@ -159,7 +160,7 @@ def get_offense_epa(api_data, trailing_weeks = 5):
     output_df = mid_df.assign(off_epa = mid_df.groupby(['season','posteam'], as_index = False)['epa'].rolling(trailing_weeks).mean()['epa'])[['season','week','posteam','off_epa']]
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_pct_pass(api_data, trailing_weeks = 5):
     '''
     Percentage of pass plays at team level
@@ -171,7 +172,7 @@ def get_pct_pass(api_data, trailing_weeks = 5):
                      rolling(trailing_weeks).mean()['proportion'])[['season','week','posteam','pct_pass']].reset_index(drop=True)
     return(just_pass.rename(columns={'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_pct_run(api_data, trailing_weeks=5):
     '''
     Percentage of run plays at team level
@@ -184,7 +185,7 @@ def get_pct_run(api_data, trailing_weeks=5):
 
     return(just_run.rename(columns={'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_team_hhi(api_data, trailing_weeks = 5):
     '''
     Calculate HHI (Proprietary metric that does ___ at team level)
@@ -209,7 +210,7 @@ def get_team_hhi(api_data, trailing_weeks = 5):
 
     return(output_df)
 
-@functools.cache
+@cache.memoize()
 def get_hhi_by_type(api_data, trailing_weeks = 5,
                     play_type = "pass" # can be pass or run
                     ):
@@ -241,7 +242,7 @@ def get_hhi_by_type(api_data, trailing_weeks = 5,
 
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
-@functools.cache
+@cache.memoize()
 def get_def_yards_per_pass(api_data, trailing_weeks = 5):
 
     yy = pd.DataFrame(api_data[api_data['play_type']=='pass'].
@@ -266,7 +267,7 @@ def get_def_yards_per_pass(api_data, trailing_weeks = 5):
 
 # yards per rush on defense
 
-@functools.cache
+@cache.memoize()
 def get_def_yards_per_rush(api_data, trailing_weeks = 5):
 
     yy = pd.DataFrame(api_data[api_data['play_type']=='run'].
@@ -289,7 +290,7 @@ def get_def_yards_per_rush(api_data, trailing_weeks = 5):
     return(output_df.reset_index(drop=True))
 
 # defensive EPA per pass allowed
-@functools.cache
+@cache.memoize()
 def get_def_epa_per_pass(api_data, trailing_weeks = 5):
 
     epa_df = api_data[api_data['play_type']=="pass"].groupby(['season','week','defteam'], as_index=False)['epa'].mean().sort_values(by=['season','defteam','week'])
@@ -302,7 +303,7 @@ def get_def_epa_per_pass(api_data, trailing_weeks = 5):
 
 
 # defensive EPA per rush allowed
-@functools.cache
+@cache.memoize()
 def get_def_epa_per_rush(api_data, trailing_weeks = 5):
 
     epa_df = api_data[api_data['play_type']=="run"].groupby(['season','week','defteam'], as_index=False)['epa'].mean().sort_values(by=['season','defteam','week'])
@@ -313,7 +314,7 @@ def get_def_epa_per_rush(api_data, trailing_weeks = 5):
 
 
 # average points per drive
-@functools.cache
+@cache.memoize()
 def get_points_per_drive(api_data, trailing_weeks = 5):
 
     drive_results = api_data[['season','week','posteam','fixed_drive','fixed_drive_result']].drop_duplicates().reset_index(drop=True)
@@ -328,7 +329,7 @@ def get_points_per_drive(api_data, trailing_weeks = 5):
 
 
 # average points per drive allowed
-@functools.cache
+@cache.memoize()
 def get_def_points_per_drive(api_data, trailing_weeks = 5):
 
     drive_results = api_data[['season','week','defteam','fixed_drive','fixed_drive_result']].drop_duplicates().reset_index(drop=True)
@@ -342,7 +343,7 @@ def get_def_points_per_drive(api_data, trailing_weeks = 5):
     return(grouped_drive_results.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 # points per RZ trip
-@functools.cache
+@cache.memoize()
 def get_points_per_RZ(api_data, trailing_weeks = 5):
 
     api_data = api_data[api_data['yardline_100']<=20]
@@ -362,7 +363,7 @@ def get_points_per_RZ(api_data, trailing_weeks = 5):
     return(grouped_drive_results.reset_index(drop=True).rename(columns = {'posteam':'team'}))
 
 # points per RZ trip
-@functools.cache
+@cache.memoize()
 def get_def_points_per_RZ(api_data, trailing_weeks = 5):
 
     api_data = api_data[api_data['yardline_100']<=20]
@@ -382,7 +383,7 @@ def get_def_points_per_RZ(api_data, trailing_weeks = 5):
     return(grouped_drive_results.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 # def points per game
-@functools.cache
+@cache.memoize()
 def get_points_per_game(api_data, trailing_weeks = 5):
 
     ppg_df = api_data[['season','week','posteam','posteam_score']].groupby(['season','week','posteam'], as_index=False)['posteam_score'].max().sort_values(by=['season','posteam','week'])
@@ -391,7 +392,7 @@ def get_points_per_game(api_data, trailing_weeks = 5):
     )
 
 # points per game allwed
-@functools.cache
+@cache.memoize()
 def get_def_points_per_game(api_data, trailing_weeks = 5):
 
     def_ppg_df = api_data[['season','week','defteam','posteam_score']].groupby(['season','week','defteam'], as_index=False)['posteam_score'].max().sort_values(by=['season','defteam','week'])
@@ -402,7 +403,7 @@ def get_def_points_per_game(api_data, trailing_weeks = 5):
 
 
 # QB rush yards per game
-@functools.cache
+@cache.memoize()
 def get_qb_rush_per_game(api_data, trailing_weeks = 5):
 
     passer_names = [x for x in api_data['passer_player_name'].value_counts()[api_data['passer_player_name'].value_counts()> 10].index]
@@ -423,7 +424,7 @@ def get_qb_rush_per_game(api_data, trailing_weeks = 5):
     return(output_df)
 
 # get percent leading games
-@functools.cache
+@cache.memoize()
 def get_pct_leading(api_data, trailing_weeks = 5):
 
     # percent of plays leading
@@ -448,7 +449,7 @@ def get_pct_leading(api_data, trailing_weeks = 5):
     return(output_df)
 
 # percent of plays leading by more than three
-@functools.cache
+@cache.memoize()
 def get_pct_leading_three(api_data, trailing_weeks = 5):
 
     num = 3
@@ -476,7 +477,7 @@ def get_pct_leading_three(api_data, trailing_weeks = 5):
     return(output_df)
 
 # percent of plays leading by more than seven
-@functools.cache
+@cache.memoize()
 def get_pct_leading_seven(api_data, trailing_weeks = 5):
 
     num = 7
@@ -504,7 +505,7 @@ def get_pct_leading_seven(api_data, trailing_weeks = 5):
     return(output_df)
 
 # percent of drives ending in turnover for offense
-@functools.cache
+@cache.memoize()
 def get_drives_in_turnover(api_data, trailing_weeks = 5):
 
     int_df = api_data[['season','week','posteam','fixed_drive_result']].groupby(['season','week','posteam'], as_index=False)['fixed_drive_result'].value_counts(normalize=True)
@@ -527,7 +528,7 @@ def get_drives_in_turnover(api_data, trailing_weeks = 5):
     return(output_df.rename(columns = {'posteam':'team'}))
 
 # defensive drives ending in turnover
-@functools.cache
+@cache.memoize()
 def get_def_drives_in_turnover(api_data, trailing_weeks = 5):
 
     int_df = api_data[['season','week','defteam','fixed_drive_result']].groupby(['season','week','defteam'], as_index=False)['fixed_drive_result'].value_counts(normalize=True)
@@ -550,19 +551,19 @@ def get_def_drives_in_turnover(api_data, trailing_weeks = 5):
     return(output_df.rename(columns = {'defteam':'team'}))
 
 # get actual points per week
-@functools.cache
+@cache.memoize()
 def get_actual_game_points(api_data, trailing_weeks = 5):
 
     return(api_data.groupby(['season','week','posteam'], as_index = False)['posteam_score'].max().rename(columns = {'posteam':'team'}))
 
 # getting EPA sum
-@functools.cache
+@cache.memoize()
 def get_epa_sum(api_data, trailing_weeks = 5):
 
     return(api_data[api_data['play_type'].isin(['run','pass'])].groupby(['season','week','posteam'], as_index=False)[['epa']].sum().rename(columns = {'posteam':'team', 'epa':'off_epa'}))
 
 # QB aggressiveness by team
-@functools.cache
+@cache.memoize()
 def get_qb_aggr(next_gen_stats_pass, trailing_weeks = 5):
 
     top_qbs = next_gen_stats_pass[next_gen_stats_pass.groupby(['season','week','team_abbr'])['attempts'].rank(ascending=False)==1]
@@ -573,7 +574,7 @@ def get_qb_aggr(next_gen_stats_pass, trailing_weeks = 5):
     return(output_df)
 
 # DEF QB aggr forced
-@functools.cache
+@cache.memoize()
 def get_def_qb_aggr(next_gen_stats_pass, trailing_weeks = 5):
 
     top_qbs = next_gen_stats_pass[next_gen_stats_pass.groupby(['season','week','team_abbr'])['attempts'].rank(ascending=False)==1]
@@ -585,7 +586,7 @@ def get_def_qb_aggr(next_gen_stats_pass, trailing_weeks = 5):
     return(output_df)
 
 # box stuff rates by defense
-@functools.cache
+@cache.memoize()
 def get_def_box_stuff(next_gen_stats_rush, trailing_weeks = 5):
 
     mid_df = next_gen_stats_rush.groupby(['season','week','defteam'], as_index = False)['percent_attempts_gte_eight_defenders'].mean().sort_values(by=['season','defteam','week']).rename(columns = {'percent_attempts_gte_eight_defenders':'box_stuff_rate'})
@@ -594,7 +595,7 @@ def get_def_box_stuff(next_gen_stats_rush, trailing_weeks = 5):
     return(output_df.rename(columns={'defteam':'team'}))
 
 # WR cushion allowed by defense (time of snap)
-@functools.cache
+@cache.memoize()
 def get_def_cushion(next_gen_stats_rec, trailing_weeks = 5):
 
     mid_df = next_gen_stats_rec.groupby(['season','week','defteam'], as_index = False)['avg_cushion'].mean().sort_values(['season','defteam','week'])
@@ -604,7 +605,7 @@ def get_def_cushion(next_gen_stats_rec, trailing_weeks = 5):
 
 
 # defensive separation (time of throw)
-@functools.cache
+@cache.memoize()
 def get_def_separation(next_gen_stats_rec, trailing_weeks = 5):
 
     mid_df = next_gen_stats_rec.groupby(['season','week','defteam'], as_index = False)['avg_separation'].mean().sort_values(['season','defteam','week'])
@@ -614,7 +615,7 @@ def get_def_separation(next_gen_stats_rec, trailing_weeks = 5):
 
 
 # avg air distance per throw
-@functools.cache
+@cache.memoize()
 def get_avg_throw_dist(next_gen_stats_pass, trailing_weeks = 5):
 
     top_qbs = next_gen_stats_pass[next_gen_stats_pass.groupby(['season','week','team_abbr'])['attempts'].rank(ascending=False)==1]
@@ -625,7 +626,7 @@ def get_avg_throw_dist(next_gen_stats_pass, trailing_weeks = 5):
 
 
 # plays over 25 yards
-@functools.cache
+@cache.memoize()
 def get_off_plays_25yd(api_data, trailing_weeks = 5):
 
     index_cols = api_data[['season','week','posteam']].dropna().drop_duplicates().reset_index(drop=True).sort_values(by=['season','posteam','week']).rename(columns={'posteam':'team'})
@@ -639,7 +640,7 @@ def get_off_plays_25yd(api_data, trailing_weeks = 5):
     return(output_df)
 
 # touchdowns over 25 yards
-@functools.cache
+@cache.memoize()
 def get_off_td_25yd(api_data, trailing_weeks = 5):
 
     index_cols = api_data[['season','week','posteam']].dropna().drop_duplicates().reset_index(drop=True).sort_values(by=['season','posteam','week']).rename(columns={'posteam':'team'})
@@ -653,7 +654,7 @@ def get_off_td_25yd(api_data, trailing_weeks = 5):
     return(output_df)
 
 # plays over 25 yards allowed
-@functools.cache
+@cache.memoize()
 def get_def_plays_25yd(api_data, trailing_weeks = 5):
 
     index_cols = api_data[['season','week','posteam']].dropna().drop_duplicates().reset_index(drop=True).sort_values(by=['season','posteam','week']).rename(columns={'posteam':'team'})
@@ -667,7 +668,7 @@ def get_def_plays_25yd(api_data, trailing_weeks = 5):
     return(output_df)
 
 # td over 25 yards allowed
-@functools.cache
+@cache.memoize()
 def get_def_td_25yd(api_data, trailing_weeks = 5):
 
     index_cols = api_data[['season','week','posteam']].dropna().drop_duplicates().reset_index(drop=True).sort_values(by=['season','posteam','week']).rename(columns={'posteam':'team'})
@@ -681,7 +682,7 @@ def get_def_td_25yd(api_data, trailing_weeks = 5):
     return(output_df)
 
 # series conversion rate
-@functools.cache
+@cache.memoize()
 def get_off_scr(api_data, trailing_weeks = 5):
 
     mid_df = api_data[['season','week','posteam','series','series_success']].groupby(['season','week','posteam'], as_index=False).agg({'series':'max', 'series_success':'sum'})
@@ -697,7 +698,7 @@ def get_off_scr(api_data, trailing_weeks = 5):
     return(output_df.rename(columns = {'posteam':'team'}))
 
 # defensive series conversion rate allowed
-@functools.cache
+@cache.memoize()
 def get_def_scr_allowed(api_data, trailing_weeks = 5):
 
     mid_df = api_data[['season','week','defteam','series','series_success']].groupby(['season','week','defteam'], as_index=False).agg({'series':'max', 'series_success':'sum'})
@@ -713,7 +714,7 @@ def get_def_scr_allowed(api_data, trailing_weeks = 5):
     return(output_df.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 # QB completion rate offense
-@functools.cache
+@cache.memoize()
 def get_qb_comp_rate(api_data, trailing_weeks = 5):
 
     mid_df = api_data[api_data['play_type']=='pass'].groupby(['season','week','posteam'], as_index=False)[['complete_pass','play_counter']].sum()
@@ -729,7 +730,7 @@ def get_qb_comp_rate(api_data, trailing_weeks = 5):
 
 
 # QB completion rate allowed on defense
-@functools.cache
+@cache.memoize()
 def qb_def_comp_rate_allowed(api_data, trailing_weeks = 5):
 
     mid_df = api_data[api_data['play_type']=='pass'].groupby(['season','week','defteam'], as_index=False)[['complete_pass','play_counter']].sum()
@@ -745,7 +746,7 @@ def qb_def_comp_rate_allowed(api_data, trailing_weeks = 5):
 
 
 # QB hits allowed on offense
-@functools.cache
+@cache.memoize()
 def qb_hits_allowed_off(api_data, trailing_weeks = 5):
 
     mid_df = api_data.groupby(['season','week','posteam'], as_index=False)[['qb_hit','play_counter']].sum()
@@ -766,7 +767,7 @@ def qb_hits_allowed_off(api_data, trailing_weeks = 5):
     return(output_df.rename(columns = {'posteam':'team'}))
 
 # QB hits by defense
-@functools.cache
+@cache.memoize()
 def get_def_qb_hits(api_data, trailing_weeks = 5):
 
     mid_df = api_data.groupby(['season','week','defteam'], as_index=False)[['qb_hit','play_counter']].sum()
@@ -789,7 +790,7 @@ def get_def_qb_hits(api_data, trailing_weeks = 5):
 
 
 # SEASON score differential
-@functools.cache
+@cache.memoize()
 def get_season_point_diff(api_data):
 
     api_data['home_score_diff'] = api_data['home_score']-api_data['away_score']
@@ -808,7 +809,7 @@ def get_season_point_diff(api_data):
     return(output_df)
 
 # points on the opening drive of a game
-@functools.cache
+@cache.memoize()
 def get_first_drive_points_scored(api_data, trailing_weeks = 5):
 
     mid_df = api_data[['season','week','posteam', 'drive','fixed_drive_result']].drop_duplicates().reset_index(drop=True)
@@ -825,7 +826,7 @@ def get_first_drive_points_scored(api_data, trailing_weeks = 5):
 
 
 # points ALLOWED first drive of game
-@functools.cache
+@cache.memoize()
 def get_def_first_drive_points_allowed(api_data, trailing_weeks = 5):
 
     mid_df = api_data[['season','week','defteam', 'drive','fixed_drive_result']].drop_duplicates().reset_index(drop=True)
@@ -841,7 +842,7 @@ def get_def_first_drive_points_allowed(api_data, trailing_weeks = 5):
     return(output_df.reset_index(drop=True).rename(columns={'defteam':'team'}))
 
 # pct of passing yards from YAC versus actual receiving yards
-@functools.cache
+@cache.memoize()
 def get_yac_air_yards(api_data, trailing_weeks = 5):
 
     mid_df = api_data[(api_data['play_type']=='pass') & (api_data['complete_pass'] == 1)].groupby(['season','week','posteam'], as_index=False)[['air_yards','yards_after_catch']].sum()
@@ -858,7 +859,7 @@ def get_yac_air_yards(api_data, trailing_weeks = 5):
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
 # points on the opening drive of the second half
-@functools.cache
+@cache.memoize()
 def get_2h_first_drive_points_scored(api_data, trailing_weeks = 5):
 
     api_data = api_data[api_data['game_half']=='Half2']
@@ -876,7 +877,7 @@ def get_2h_first_drive_points_scored(api_data, trailing_weeks = 5):
     return(output_df.reset_index(drop=True).rename(columns={'posteam':'team'}))
 
 # points ALLOWED first drive of 2h
-@functools.cache
+@cache.memoize()
 def get_2h_def_first_drive_points_allowed(api_data, trailing_weeks = 5):
 
     api_data = api_data[api_data['game_half']=='Half2']

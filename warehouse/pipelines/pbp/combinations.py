@@ -5,6 +5,7 @@ import pandas as pd
 import requests as requests
 import functools as ft
 
+
 REPO_NAME = 'sewer-nfl'
 cwd = str(os.getcwd())
 repo_dir = cwd[:cwd.find(REPO_NAME)+len(REPO_NAME)]
