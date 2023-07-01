@@ -499,7 +499,7 @@ def pipe_def_big_play(api_data, next_gen_stats_rec, next_gen_stats_rush, trailin
     # get_def_td_25yd: 0, / 2
     temp_def_td_25 = get_def_td_25yd(api_data, trailing_weeks)
     # pipe_def_burn_commit: -.2, / 1.3
-    temp_burn_commit = pipe_def_burn_commit(api_data, next_gen_stats_rec, next_gen_stats_rush, trailing_weeks)
+    temp_burn_commit = pipe_def_burn_commit(next_gen_stats_rec, next_gen_stats_rush, trailing_weeks)
 
     # now combining
 
