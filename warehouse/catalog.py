@@ -254,195 +254,196 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         ]
     },
-    'get_pct_leading':{
+    'proportion_leading':{
         'func': get_pct_leading,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_pct_leading_three':{
+    'proportion_leading_three':{
         'func': get_pct_leading_three,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_drives_in_turnover':{
+    'off_turnover_rate':{
         'func': get_drives_in_turnover,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_drives_in_turnover':{
+    'def_turnover_rate':{
         'func': get_def_drives_in_turnover,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_actual_game_points':{
+    'actual_off_points':{
         'func': get_actual_game_points,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_epa_sum':{
+    'total_off_epa_sum':{
         'func': get_epa_sum,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_qb_aggr':{
+    'qb_aggr':{
         'func': get_qb_aggr,
         'params':[
             ngs['passing'],
             TRAILING_WEEKS
         ]
     },
-    'get_def_qb_aggr':{
+    'def_aggr_forced':{
         'func': get_def_qb_aggr,
         'params':[
             ngs['passing'],
             TRAILING_WEEKS
         ]
     },
-    'get_def_box_stuff':{
+    'def_box_stuff_rate':{
         'func': get_def_box_stuff,
         'params':[
             ngs['rushing'],
             TRAILING_WEEKS
         ]
     },
-    'get_def_cushion':{
+    'def_cushion':{
         'func': get_def_cushion,
         'params':[
             ngs['receiving'],
             TRAILING_WEEKS
         ]
     },
-    'get_def_separation':{
+    'def_separation':{
         'func': get_def_separation,
         'params':[
             ngs['receiving'],
             TRAILING_WEEKS
         ]
     },
-    'get_avg_throw_dist':{
+    'off_avg_throw_dist':{
         'func': get_avg_throw_dist,
         'params':[
             ngs['passing'],
             TRAILING_WEEKS
         ]
     },
-    'get_off_plays_25yd':{
+    'plays_over_25_yd':{
         'func': get_off_plays_25yd,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_off_td_25yd':{
+    'td_over_25_yd':{
         'func': get_off_td_25yd,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_plays_25yd':{
+    'def_plays_over_25_yd':{
         'func': get_def_plays_25yd,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_td_25yd':{
+    'def_td_over_25_yd':{
         'func': get_def_td_25yd,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_off_scr':{
+    'team_scr':{
         'func': get_off_scr,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_scr_allowed':{
+    'defteam_scr':{
         'func': get_def_scr_allowed,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_qb_comp_rate':{
+    'off_qb_comp':{
         'func': get_qb_comp_rate,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'qb_def_comp_rate_allowed':{
+    'def_qb_comp':{
         'func': qb_def_comp_rate_allowed,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'qb_hits_allowed_off':{
+    'off_qbhit':{
         'func': qb_hits_allowed_off,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_qb_hits':{
+    'def_qbhit':{
         'func': get_def_qb_hits,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_season_point_diff':{
+    'total_season_point_differential':{
         'func': get_season_point_diff,
         'params':[
             pbp_api_data
         ]
     },
-    'get_first_drive_points_scored':{
+    'first_drive_pts_avg':{
         'func': get_first_drive_points_scored,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_first_drive_points_allowed':{
+    'first_drive_pts_avg_allowed':{
         'func': get_def_first_drive_points_allowed,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_yac_air_yards':{
+    'yac_air_yards':{
         'func': get_yac_air_yards,
+        'output_columns': ['trailing_pct_air_yards','trailing_pct_yac'],
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_2h_first_drive_points_scored':{
+    'h2_first_drive_pts_avg':{
         'func': get_2h_first_drive_points_scored,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_2h_def_first_drive_points_allowed':{
+    'h2_first_drive_pts_avg_allowed':{
         'func': get_2h_def_first_drive_points_allowed,
         'params':[
             pbp_api_data,
