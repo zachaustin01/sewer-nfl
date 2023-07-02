@@ -56,6 +56,7 @@ def build_training_dataset(
 
     t_cols = [c for c in df.columns if c not in gd.columns]
     res = gd
+    res['week'] = res['week'] -1
     for side in ['home','away']:
         res = res.merge(df,
                 how = "left",
