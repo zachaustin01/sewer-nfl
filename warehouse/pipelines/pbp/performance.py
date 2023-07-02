@@ -788,7 +788,6 @@ def get_def_qb_hits(api_data, trailing_weeks = 5):
 
     return(output_df.reset_index(drop=True).rename(columns={'defteam':'team'}))
 
-
 # SEASON score differential
 @cache.memoize()
 def get_season_point_diff(api_data):
