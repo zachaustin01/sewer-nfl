@@ -48,7 +48,8 @@ def select_variable_subset(inp_dict = FUNCTION_CATALOG, total_variables = 12, fa
         # joining the defensive variables with the freq adjustment, and sampling the number of variables remaining after counterparts have been chosen
 
         mid_def_df = catalog_df[(catalog_df['ball_side'] == 'def') & (~catalog_df['output_columns'].isin(counterpart_variables))].merge(freq_adjustment, on = ['var_category'], how = 'left')
-        mid_def_df['var_importance'] = mid_def_df['var_importance'] + mid_def_df['adj_val']
+        mid_def_df['adj_val'] = np.where(pd.isna(mid_def_df['adj_val']), 0, mid_def_df['adj_val'])
+        mid_def_df['var_importance'] = mid_def_df['var_importance'] + mid_def_df['adj_val'] # just bumping up the frequency of selection for fields of the same category as offensive fields
         def_variables = mid_def_df.sample(n = len(off_variables) - len(counterpart_variables), weights = 'var_importance')['output_columns'].tolist()
 
         # all column variable output
