@@ -38,20 +38,30 @@ def select_variable_subset(inp_dict = FUNCTION_CATALOG, total_variables = 12, fa
 
     counterpart_variables = off_df[off_df['var_counterpart'].notnull()]['var_counterpart'].tolist()
     
-    # adjusting the variable weight of the defensive variables according to the category of variables chosen in the offensive subset
-
-    freq_adjustment = pd.DataFrame(off_df['var_category'].value_counts(normalize = True)).reset_index().rename(columns = {'var_category':'adj_val', 'index':'var_category'})
-
-    # joining the defensive variables with the freq adjustment, and sampling the number of variables remaining after counterparts have been chosen
+    if len(counterpart_variables) != len(off_variables):
     
-    mid_def_df = catalog_df[(catalog_df['ball_side'] == 'def') & (~catalog_df['output_columns'].isin(counterpart_variables))].merge(freq_adjustment, on = ['var_category'], how = 'left')
-    mid_def_df['var_importance'] = mid_def_df['var_importance'] * mid_def_df['adj_val']
-    def_variables = mid_def_df.sample(n = len(off_variables) - len(counterpart_variables), weights = 'var_importance')['output_columns'].tolist()
+        # adjusting the variable weight of the defensive variables according to the category of variables chosen in the offensive subset
 
-    # all column variable output
+        freq_adjustment = pd.DataFrame(off_df['var_category'].value_counts(normalize = True)).reset_index().rename(columns = {'var_category':'adj_val', 'index':'var_category'})
 
-    all_variables = [off_variables, counterpart_variables, def_variables]
+        # joining the defensive variables with the freq adjustment, and sampling the number of variables remaining after counterparts have been chosen
+
+        mid_def_df = catalog_df[(catalog_df['ball_side'] == 'def') & (~catalog_df['output_columns'].isin(counterpart_variables))].merge(freq_adjustment, on = ['var_category'], how = 'left')
+        mid_def_df['var_importance'] = mid_def_df['var_importance'] * mid_def_df['adj_val']
+        def_variables = mid_def_df.sample(n = len(off_variables) - len(counterpart_variables), weights = 'var_importance')['output_columns'].tolist()
+
+        # all column variable output
+
+        all_variables = [off_variables, counterpart_variables, def_variables]
+        
+    else:
+        
+        all_variables = [off_variables, counterpart_variables]
 
     all_variables = [item for sublist in all_variables for item in sublist]
 
     return(all_variables)
+
+
+
+
