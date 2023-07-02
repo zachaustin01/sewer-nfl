@@ -16,13 +16,117 @@ from warehouse.pipelines.pbp.setup import setup_pbp
 # Import pipelines
 from warehouse.pipelines.pbp.involvement import *
 from warehouse.pipelines.pbp.performance import *
+from warehouse.pipelines.pbp.combinations import *
 
 # Import config
 from warehouse.config import *
 
-
 FUNCTION_CATALOG = {
-    # Performance
+####################################################################################################
+# Team Performance Combinations (Higher Level Dependencies)
+####################################################################################################
+    'turnover_propensity':{
+        'func': pipe_turnover_propensity,
+        'params':(
+            pbp_api_data,
+            ngs['passing'],
+            TRAILING_WEEKS
+        )
+    },
+    'def_turnover_propensity':{
+        'func': pipe_def_turnover_propensity,
+        'params':(
+            pbp_api_data,
+            ngs['passing'],
+            ngs['receiving'],
+            TRAILING_WEEKS
+        )
+    },
+    'epa_hhi_combo':{
+        'func': pipe_epa_hhi_combo,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'points_per_epa':{
+        'func': pipe_points_per_epa,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'offensive_coaching':{
+        'func': pipe_offense_coaching_ability,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'defensive_coaching':{
+        'func': pipe_defense_coaching_ability,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'def_burn_commit':{
+        'func': pipe_def_burn_commit,
+        'params':(
+            ngs['receiving'],
+            ngs['rushing'],
+            TRAILING_WEEKS
+        )
+    },
+    'offense_scoring_propensity':{
+        'func': pipe_offense_scoring_propensity,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'defense_scoring_allowance':{
+        'func': pipe_defense_scoring_allowance,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'offense_big_play':{
+        'func': pipe_offense_big_play,
+        'params':(
+            pbp_api_data,
+            ngs['passing'],
+            TRAILING_WEEKS
+        )
+    },
+    'defense_big_play':{
+        'func': pipe_def_big_play,
+        'params':(
+            pbp_api_data,
+            ngs['receiving'],
+            ngs['rushing'],
+            TRAILING_WEEKS
+        )
+    },
+    'garbagetime_epa':{
+        'func': pipe_garbagetime_epa,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+    'overall_coaching':{
+        'func': pipe_overall_coaching,
+        'params':(
+            pbp_api_data,
+            TRAILING_WEEKS
+        )
+    },
+
+####################################################################################################
+# Team Performance (Lower level Dependencies)
+####################################################################################################
     'get_yards_per_rush':{
         'func': get_yards_per_rush,
         'params':(
@@ -184,38 +288,52 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         ]
     },
+    'get_epa_sum':{
+        'func': get_epa_sum,
+        'params':[
+            pbp_api_data,
+            TRAILING_WEEKS
+        ]
+    },
+    'get_qb_aggr':{
+        'func': get_qb_aggr,
+        'params':[
+            ngs['passing'],
+            TRAILING_WEEKS
+        ]
+    },
     'get_def_qb_aggr':{
         'func': get_def_qb_aggr,
         'params':[
-            pbp_api_data,
+            ngs['passing'],
             TRAILING_WEEKS
         ]
     },
     'get_def_box_stuff':{
         'func': get_def_box_stuff,
         'params':[
-            pbp_api_data,
+            ngs['rushing'],
             TRAILING_WEEKS
         ]
     },
     'get_def_cushion':{
         'func': get_def_cushion,
         'params':[
-            pbp_api_data,
+            ngs['receiving'],
             TRAILING_WEEKS
         ]
     },
     'get_def_separation':{
         'func': get_def_separation,
         'params':[
-            pbp_api_data,
+            ngs['receiving'],
             TRAILING_WEEKS
         ]
     },
     'get_avg_throw_dist':{
         'func': get_avg_throw_dist,
         'params':[
-            pbp_api_data,
+            ngs['passing'],
             TRAILING_WEEKS
         ]
     },
@@ -292,8 +410,7 @@ FUNCTION_CATALOG = {
     'get_season_point_diff':{
         'func': get_season_point_diff,
         'params':[
-            pbp_api_data,
-            TRAILING_WEEKS
+            pbp_api_data
         ]
     },
     'get_first_drive_points_scored':{
