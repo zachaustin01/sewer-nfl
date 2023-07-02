@@ -61,7 +61,7 @@ def build_training_dataset(
                 how = "left",
                 left_on = ['season','week',f'{side}_team'],
                 right_on = ['season','week','team'])
-        r_dict = {key:f'{side}_{key}' for key in t_cols}
+        r_dict = {key:f'{side}_{key}' for key in t_cols if f'{side}_{key}' not in gd.columns}
         res.rename(columns = r_dict, inplace=True)
 
     # Add filter
