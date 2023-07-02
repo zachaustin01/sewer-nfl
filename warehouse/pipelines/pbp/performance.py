@@ -287,7 +287,7 @@ def get_def_yards_per_rush(api_data, trailing_weeks = 5):
 
     output_df.groupby(['season','defteam'], as_index=False)['def_yards_per_rush'].mean().sort_values(by=['def_yards_per_rush'])
 
-    return(output_df.reset_index(drop=True))
+    return(output_df.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 # defensive EPA per pass allowed
 @cache.memoize()

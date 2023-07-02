@@ -42,7 +42,7 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         )
     },
-    'epa_hhi_combo':{
+    'balanced_player_efficacy':{
         'func': pipe_epa_hhi_combo,
         'params':(
             pbp_api_data,
@@ -56,21 +56,21 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         )
     },
-    'offensive_coaching':{
+    'off_coaching':{
         'func': pipe_offense_coaching_ability,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'defensive_coaching':{
+    'def_coaching':{
         'func': pipe_defense_coaching_ability,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'def_burn_commit':{
+    'conservative_coverage':{
         'func': pipe_def_burn_commit,
         'params':(
             ngs['receiving'],
@@ -78,21 +78,21 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         )
     },
-    'offense_scoring_propensity':{
+    'offensive_scoring_ability':{
         'func': pipe_offense_scoring_propensity,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'defense_scoring_allowance':{
+    'defensive_scoring_allow':{
         'func': pipe_defense_scoring_allowance,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'offense_big_play':{
+    'off_big_play_propensity':{
         'func': pipe_offense_big_play,
         'params':(
             pbp_api_data,
@@ -100,7 +100,7 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         )
     },
-    'defense_big_play':{
+    'defense_big_play_propensity':{
         'func': pipe_def_big_play,
         'params':(
             pbp_api_data,
@@ -109,12 +109,13 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         )
     },
-    'garbagetime_epa':{
+    'time_epa':{
         'func': pipe_garbagetime_epa,
+        'output_columns' : ['normaltime_epa', 'garbagetime_epa'],
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
-        )
+        )  
     },
     'overall_coaching':{
         'func': pipe_overall_coaching,
@@ -127,77 +128,77 @@ FUNCTION_CATALOG = {
 ####################################################################################################
 # Team Performance (Lower level Dependencies)
 ####################################################################################################
-    'get_yards_per_rush':{
+    'yards_per_carry':{
         'func': get_yards_per_rush,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_yards_per_pass':{
+    'yards_per_pass':{
         'func': get_yards_per_pass,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_epa_per_rush':{
+    'epa_per_rush':{
         'func': get_epa_per_rush,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_epa_per_pass':{
+    'epa_per_pass':{
         'func': get_epa_per_pass,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_offense_epa':{
+    'off_epa_x':{
         'func': get_offense_epa,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_pct_pass':{
+    'pct_pass':{
         'func': get_pct_pass,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_pct_run':{
+    'pct_run':{
         'func': get_pct_run,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_team_hhi':{
+    'team_HHI':{
         'func': get_team_hhi,
         'params':(
             pbp_api_data,
             TRAILING_WEEKS
         )
     },
-    'get_hhi_by_type':{
+    'team_passing_HHI':{
         'func': get_hhi_by_type,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_yards_per_pass':{
+    'def_yards_per_pass':{
         'func': get_def_yards_per_pass,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_yards_per_rush':{
+    'def_yards_per_rush':{
         'func': get_def_yards_per_rush,
         'params':[
             pbp_api_data,
