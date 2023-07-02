@@ -399,7 +399,7 @@ def get_def_points_per_game(api_data, trailing_weeks = 5):
 
     def_ppg_df = def_ppg_df.assign(def_ppg = def_ppg_df.groupby(['season','defteam'], as_index=False)['posteam_score'].rolling(trailing_weeks).mean()['posteam_score'])[['season','week','defteam', 'def_ppg']]
 
-    return(def_ppg_df.reset_index(drop=True))
+    return(def_ppg_df.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 
 # QB rush yards per game

@@ -205,49 +205,49 @@ FUNCTION_CATALOG = {
             TRAILING_WEEKS
         ]
     },
-    'get_def_epa_per_pass':{
+    'def_pass_epa':{
         'func': get_def_epa_per_pass,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_epa_per_rush':{
+    'def_rush_epa':{
         'func': get_def_epa_per_rush,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_points_per_drive':{
+    'def_points_per_drive':{
         'func': get_def_points_per_drive,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_points_per_RZ':{
+    'points_per_RZ':{
         'func': get_points_per_RZ,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_points_per_RZ':{
+    'def_points_per_RZ':{
         'func': get_def_points_per_RZ,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_points_per_game':{
+    'off_ppg':{
         'func': get_points_per_game,
         'params':[
             pbp_api_data,
             TRAILING_WEEKS
         ]
     },
-    'get_def_points_per_game':{
+    'def_ppg':{
         'func': get_def_points_per_game,
         'params':[
             pbp_api_data,
