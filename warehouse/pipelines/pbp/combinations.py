@@ -194,6 +194,16 @@ def pipe_points_per_epa(api_data, trailing_weeks = 5):
 
     df_final = df_final.sort_values('points_per_epa')
 
+    # new additions
+
+    mid_df = df_final.sort_values(['season','team','week'])
+
+    df_final = mid_df.assign(rolling_points_per_epa = mid_df.groupby(['season','team'], as_index = False)['points_per_epa'].rolling(trailing_weeks).mean()['points_per_epa'])[['season','week','team','rolling_points_per_epa']]
+
+    df_final = df_final.rename(columns = {'rolling_points_per_epa':'points_per_epa'})
+
+    # done
+
     return(df_final.reset_index(drop=True)[['season','week','team','points_per_epa']])
 
 def pipe_offense_coaching_ability(api_data, trailing_weeks = 5):
