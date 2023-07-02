@@ -10,8 +10,6 @@ cwd = str(os.getcwd())
 repo_dir = cwd[:cwd.find(REPO_NAME)+len(REPO_NAME)]
 sys.path.insert(0,repo_dir)
 
-# Import setups
-from warehouse.pipelines.pbp.setup import setup_pbp
 
 # Import pipelines
 from warehouse.pipelines.pbp.involvement import *
