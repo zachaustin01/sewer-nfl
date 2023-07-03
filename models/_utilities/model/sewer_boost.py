@@ -41,10 +41,8 @@ class Model:
 
     def __init__(self,
                  training_data,
-                 selected_features = None,
                  test_years = [2022],
                  response = 'home_cover', # Options: ['home_cover','spread_line','within_three']
-                 run_grid = False
                  ):
 
         self.training_data = training_data
@@ -58,8 +56,7 @@ class Model:
                            NUMERIC_META_COLS and c in self.training_data.select_dtypes(np.number)]
 
         self.train_test_split()
-        if run_grid: self.grid_search_for_params()
-        self.build_model(run_grid)
+        self.build_model()
         self.assess_on_test()
 
     def assess_predictor_importance(self):
@@ -68,28 +65,23 @@ class Model:
             .sort_values('importance',ascending=False)
         return self.model.feature_importances_, self.predictors
 
-    def build_model(self, run_grid = False):
+    def build_model(self,
+        params = {
+            'objective':'binary:logistic',
+            'gamma':0.4,
+            'learning_rate':0.005,
+            'max_depth':10,
+            'n_estimators':90,
+            'tree_method':'hist',
+            'grow_policy': 'lossguide',
+            'reg_alpha': 0.5,
+            'reg_lambda': 0.5
+        }):
 
-        best_auc = 0
-        if run_grid:
-            for m in self.results_dict.keys():
-                if self.results_dict[m]['test roc auc score'] > best_auc:
-                    self.best_params = self.results_dict[m]['best_params']
-        else:
-            self.best_params = {
-                'objective':'binary:logistic',
-                'gamma':0.4,
-                'learning_rate':0.005,
-                'max_depth':10,
-                'n_estimators':90,
-                'tree_method':'hist',
-                'grow_policy': 'lossguide',
-                'reg_alpha': 0.5,
-                'reg_lambda': 0.5
-            }
-            self.model = XGBClassifier()
-            self.model.set_params(**self.best_params)
-            self.model.fit(self.X_train, self.y_train)
+        self.best_params = params
+        self.model = XGBClassifier()
+        self.model.set_params(**self.best_params)
+        self.model.fit(self.X_train, self.y_train)
 
     def train_test_split(
             self,
