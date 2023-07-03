@@ -5,11 +5,19 @@ from copy import deepcopy
 import xgboost as xgb
 import numpy as np
 import pandas as pd
-from xgboost import XGBClassifier
+from xgboost import XGBClassifier, plot_importance
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,train_test_split
 from sklearn.metrics import accuracy_score,f1_score,roc_auc_score,confusion_matrix,roc_curve
-import seaborn as sns
+
+import warnings
+
+def fxn():
+    warnings.warn("deprecated", DeprecationWarning)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    fxn()
 
 import matplotlib.pyplot as plt
 
@@ -33,8 +41,10 @@ class Model:
 
     def __init__(self,
                  training_data,
+                 selected_features = None,
                  test_years = [2022],
                  response = 'home_cover', # Options: ['home_cover','spread_line','within_three']
+                 run_grid = False
                  ):
 
         self.training_data = training_data
@@ -48,24 +58,38 @@ class Model:
                            NUMERIC_META_COLS and c in self.training_data.select_dtypes(np.number)]
 
         self.train_test_split()
-        self.grid_search_for_params()
-        self.build_model()
+        if run_grid: self.grid_search_for_params()
+        self.build_model(run_grid)
         self.assess_on_test()
 
-    def build_model(self):
+    def assess_predictor_importance(self):
+
+        return pd.DataFrame({'importance':self.model.feature_importances_,'feature':self.predictors})\
+            .sort_values('importance',ascending=False)
+        return self.model.feature_importances_, self.predictors
+
+    def build_model(self, run_grid = False):
 
         best_auc = 0
-        for m in self.results_dict.keys():
-            if self.results_dict[m]['test roc auc score'] > best_auc:
-                self.best_params = self.results_dict[m]['best_params']
-
-        self.model = XGBClassifier(objective='binary:logistic',
-                            booster='gbtree',
-                            eval_metric='auc',
-                            tree_method='hist',
-                            grow_policy='lossguide')
-        self.model.set_params(**self.best_params)
-        self.model.fit(self.X_train, self.y_train)
+        if run_grid:
+            for m in self.results_dict.keys():
+                if self.results_dict[m]['test roc auc score'] > best_auc:
+                    self.best_params = self.results_dict[m]['best_params']
+        else:
+            self.best_params = {
+                'objective':'binary:logistic',
+                'gamma':0.4,
+                'learning_rate':0.005,
+                'max_depth':10,
+                'n_estimators':90,
+                'tree_method':'hist',
+                'grow_policy': 'lossguide',
+                'reg_alpha': 0.5,
+                'reg_lambda': 0.5
+            }
+            self.model = XGBClassifier()
+            self.model.set_params(**self.best_params)
+            self.model.fit(self.X_train, self.y_train)
 
     def grid_search_for_params(self):
         xgbc0 = XGBClassifier(objective='binary:logistic',
@@ -239,10 +263,7 @@ class Model:
         '''
         Return percentage of correct picks if using top N in confidence per week
         '''
-        if self.top_N is None:
-            top_N = self.get_test_results(most_confident= most_confident, save = save)
-        else:
-            top_N = self.top_N
+        top_N = self.get_test_results(most_confident= most_confident, save = save)
         return round(sum(top_N['win'] / len(top_N['win'])),2)
 
     def get_test_accuracy_drop_off(self, top_N_range = list(range(1,7)), threshold = 0.5):
