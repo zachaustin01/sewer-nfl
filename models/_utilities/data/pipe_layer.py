@@ -7,6 +7,7 @@ Config attributes should already be imported before running the pipe layer
 import sys
 import os
 import copy
+import pandas as pd
 
 REPO_NAME = 'sewer-nfl'
 CWD = str(os.getcwd())
@@ -17,11 +18,12 @@ from warehouse.pipelines.game_summary.game_summary import game_outcomes
 from warehouse.catalog import build_catalog
 
 def build_training_dataset(
-        config,
+        config = None,
         auto_filter = .25, # Allowable percentage of columns that can be missing
         cache = True,
         cache_path = 'cache/training_datasets',
-        cache_name = 'v1'
+        cache_name = 'v1',
+        regenerate = True
 ):
     '''
 
@@ -31,8 +33,13 @@ def build_training_dataset(
               FEATURE_CATALOG creation
 
     '''
+    # Are we reading from cache?
+    if config is None:
+        print('Using cache')
+        return pd.read_csv(f'{REPO_DIR}/{cache_path}/{cache_name}.csv')
 
     # Pull ALL data at team and week level
+
     gd = game_outcomes(config.pbp_api_data)
     FUNCTION_CATALOG = build_catalog(config)
     catalog_results = [
