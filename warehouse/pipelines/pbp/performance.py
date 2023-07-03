@@ -287,7 +287,7 @@ def get_def_yards_per_rush(api_data, trailing_weeks = 5):
 
     output_df.groupby(['season','defteam'], as_index=False)['def_yards_per_rush'].mean().sort_values(by=['def_yards_per_rush'])
 
-    return(output_df.reset_index(drop=True))
+    return(output_df.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 # defensive EPA per pass allowed
 @cache.memoize()
@@ -399,7 +399,7 @@ def get_def_points_per_game(api_data, trailing_weeks = 5):
 
     def_ppg_df = def_ppg_df.assign(def_ppg = def_ppg_df.groupby(['season','defteam'], as_index=False)['posteam_score'].rolling(trailing_weeks).mean()['posteam_score'])[['season','week','defteam', 'def_ppg']]
 
-    return(def_ppg_df.reset_index(drop=True))
+    return(def_ppg_df.reset_index(drop=True).rename(columns = {'defteam':'team'}))
 
 
 # QB rush yards per game
@@ -525,7 +525,7 @@ def get_drives_in_turnover(api_data, trailing_weeks = 5):
 
     output_df = mid_df.assign(turnover_rate = mid_df.groupby(['season','posteam'],as_index = False)['proportion'].rolling(trailing_weeks).mean()['proportion'])[['season','week','posteam','turnover_rate']]
 
-    return(output_df.rename(columns = {'posteam':'team'}))
+    return(output_df.rename(columns = {'posteam':'team', 'turnover_rate':'off_turnover_rate'}))
 
 # defensive drives ending in turnover
 @cache.memoize()
@@ -548,19 +548,19 @@ def get_def_drives_in_turnover(api_data, trailing_weeks = 5):
 
     output_df = mid_df.assign(turnover_rate = mid_df.groupby(['season','defteam'],as_index = False)['proportion'].rolling(trailing_weeks).mean()['proportion'])[['season','week','defteam','turnover_rate']]
 
-    return(output_df.rename(columns = {'defteam':'team'}))
+    return(output_df.rename(columns = {'defteam':'team', 'turnover_rate':'def_turnover_rate'}))
 
 # get actual points per week
 @cache.memoize()
 def get_actual_game_points(api_data, trailing_weeks = 5):
 
-    return(api_data.groupby(['season','week','posteam'], as_index = False)['posteam_score'].max().rename(columns = {'posteam':'team'}))
+    return(api_data.groupby(['season','week','posteam'], as_index = False)['posteam_score'].max().rename(columns = {'posteam':'team', 'posteam_score':'actual_off_points'}))
 
 # getting EPA sum
 @cache.memoize()
 def get_epa_sum(api_data, trailing_weeks = 5):
 
-    return(api_data[api_data['play_type'].isin(['run','pass'])].groupby(['season','week','posteam'], as_index=False)[['epa']].sum().rename(columns = {'posteam':'team', 'epa':'off_epa'}))
+    return(api_data[api_data['play_type'].isin(['run','pass'])].groupby(['season','week','posteam'], as_index=False)[['epa']].sum().rename(columns = {'posteam':'team', 'epa':'total_off_epa_sum'}))
 
 # QB aggressiveness by team
 @cache.memoize()
@@ -581,7 +581,7 @@ def get_def_qb_aggr(next_gen_stats_pass, trailing_weeks = 5):
     mid_df = top_qbs.groupby(['season','week','defteam'], as_index = False)['aggressiveness'].mean().sort_values(['season','defteam','week'])
     output_df = mid_df.assign(def_aggr = mid_df.groupby(['season','defteam'], as_index = False)['aggressiveness']
                   .rolling(trailing_weeks)
-                  .mean()['aggressiveness'])[['season','week','defteam','def_aggr']].reset_index(drop=True).rename(columns={'defteam':'team'})
+                  .mean()['aggressiveness'])[['season','week','defteam','def_aggr']].reset_index(drop=True).rename(columns={'defteam':'team', 'def_aggr':'def_aggr_forced'})
 
     return(output_df)
 
@@ -788,7 +788,6 @@ def get_def_qb_hits(api_data, trailing_weeks = 5):
 
     return(output_df.reset_index(drop=True).rename(columns={'defteam':'team'}))
 
-
 # SEASON score differential
 @cache.memoize()
 def get_season_point_diff(api_data):
@@ -806,7 +805,7 @@ def get_season_point_diff(api_data):
     # output_df.sort_values(by=['score_diff'])
 
 
-    return(output_df)
+    return(output_df.rename(columns = {'score_diff':'total_season_point_differential'}))
 
 # points on the opening drive of a game
 @cache.memoize()

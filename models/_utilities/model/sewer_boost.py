@@ -41,10 +41,9 @@ class Model:
 
     def __init__(self,
                  training_data,
-                 selected_features = None,
                  test_years = [2022],
                  response = 'home_cover', # Options: ['home_cover','spread_line','within_three']
-                 run_grid = False
+                 params = None
                  ):
 
         self.training_data = training_data
@@ -58,164 +57,32 @@ class Model:
                            NUMERIC_META_COLS and c in self.training_data.select_dtypes(np.number)]
 
         self.train_test_split()
-        if run_grid: self.grid_search_for_params()
-        self.build_model(run_grid)
+        if params is not None: self.build_model(params=params)
+        else: self.build_model()
         self.assess_on_test()
 
     def assess_predictor_importance(self):
 
         return pd.DataFrame({'importance':self.model.feature_importances_,'feature':self.predictors})\
             .sort_values('importance',ascending=False)
-        return self.model.feature_importances_, self.predictors
 
-    def build_model(self, run_grid = False):
+    def build_model(self,
+        params = {
+            'objective':'binary:logistic',
+            'gamma':0.4,
+            'learning_rate':0.005,
+            'max_depth':10,
+            'n_estimators':90,
+            'tree_method':'hist',
+            'grow_policy': 'lossguide',
+            'reg_alpha': 0.5,
+            'reg_lambda': 0.5
+        }):
 
-        best_auc = 0
-        if run_grid:
-            for m in self.results_dict.keys():
-                if self.results_dict[m]['test roc auc score'] > best_auc:
-                    self.best_params = self.results_dict[m]['best_params']
-        else:
-            self.best_params = {
-                'objective':'binary:logistic',
-                'gamma':0.4,
-                'learning_rate':0.005,
-                'max_depth':10,
-                'n_estimators':90,
-                'tree_method':'hist',
-                'grow_policy': 'lossguide',
-                'reg_alpha': 0.5,
-                'reg_lambda': 0.5
-            }
-            self.model = XGBClassifier()
-            self.model.set_params(**self.best_params)
-            self.model.fit(self.X_train, self.y_train)
-
-    def grid_search_for_params(self):
-        xgbc0 = XGBClassifier(objective='binary:logistic',
-                            booster='gbtree',
-                            eval_metric='auc',
-                            tree_method='hist',
-                            grow_policy='lossguide')
-        self.params = {"objective": "multi:softprob", "tree_method": "gpu_hist", "num_class": 2}
-        xgbc0.fit(self.X_train, self.y_train)
-
-        # Pull attributes from self for easier references
-        X_train = self.X_train
-        X_test = self.X_test
-        y_train = self.y_train
-        y_test = self.y_test
-
-        #extracting default parameters from benchmark model
-        default_params = {}
-        gparams = xgbc0.get_params()
-        #default parameters have to be wrapped in lists - even single values - so GridSearchCV can take them as inputs
-        for key in gparams.keys():
-            gp = gparams[key]
-            default_params[key] = [gp]
-        #benchmark model. Grid search is not performed, since only single values are provided as parameter grid.
-        #However, cross-validation is still executed
-        clf0 = GridSearchCV(estimator=xgbc0, scoring='accuracy', param_grid=default_params, return_train_score=True, verbose=1, cv=3)
-        clf0.fit(X_train, y_train.values.ravel())
-        df = pd.DataFrame(clf0.cv_results_)
-        #predictions - inputs to confusion matrix
-        train_predictions = clf0.predict(X_train)
-        test_predictions = clf0.predict(X_test)
-        #confusion matrices
-        cfm_train = confusion_matrix(y_train, train_predictions)
-        cfm_test = confusion_matrix(y_test, test_predictions)
-        #accuracy scores
-        accs_train = accuracy_score(y_train, train_predictions)
-        accs_test = accuracy_score(y_test, test_predictions)
-        #Area Under the Receiver Operating Characteristic Curve
-        test_ras = roc_auc_score(y_test, clf0.predict_proba(X_test)[:,1])
-        #best parameters
-        bp = clf0.best_params_
-        #storing computed values in results dictionary
-        self.results_dict['xgbc0'] = {'iterable_parameter': np.nan,
-                         'classifier': deepcopy(clf0),
-                         'cv_results': df.copy(),
-                         'cfm_train': cfm_train,
-                         'cfm_test': cfm_test,
-                         'train_accuracy': accs_train,
-                         'test_accuracy': accs_test,
-                         'test roc auc score': test_ras,
-                         'best_params': bp}
-        params = deepcopy(default_params)
-        #setting grid of selected parameters for iteration
-        param_grid = {'gamma': [0,0.1,0.2,0.4,0.8],
-                    'learning_rate': [0.01, 0.03, 0.06, 0.1,],
-                    'max_depth': [5,6,7,8,9,10],
-                    'n_estimators': [100,115,130,150],
-                    'reg_alpha': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4],
-                    'reg_lambda': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4]}
-        #start time
-        t0 = time.time()
-        #No. of jobs
-        gcvj = np.cumsum([len(x) for x in param_grid.values()])[-1]
-
-        #iteration loop. Each selected parameter iterated separately
-        for i,grid_key in enumerate(param_grid.keys()):
-
-            #variable for measuring iteration time
-            loop_start = time.time()
-
-            #creating param_grid argument for GridSearchCV:
-            #listing grid values of current iterable parameter and wrapping non-iterable parameter single values in list
-            for param_key in params.keys():
-                if param_key == grid_key:
-                    params[param_key] = param_grid[grid_key]
-                else:
-                    #use best parameters of last iteration
-                    try:
-                        param_value = [clf.best_params_[param_key]]
-                        params[param_key] = param_value
-                    #use benchmark model parameters for first iteration
-                    except:
-                        param_value = [clf0.best_params_[param_key]]
-                        params[param_key] = param_value
-
-            #classifier instance of current iteration
-            xgbc = xgb.XGBClassifier(**default_params)
-
-            #GridSearch instance of current iteration
-            clf = GridSearchCV(estimator=xgbc, param_grid=params, scoring='accuracy', return_train_score=True, verbose=1, cv=3)
-            clf.fit(X_train, y_train.values.ravel())
-
-            #results dataframe
-            df = pd.DataFrame(clf.cv_results_)
-
-            #predictions - inputs to confusion matrix
-            train_predictions = clf.predict(X_train)
-            test_predictions = clf.predict(X_test)
-            #confusion matrices
-            cfm_train = confusion_matrix(y_train, train_predictions)
-            cfm_test = confusion_matrix(y_test, test_predictions)
-            #accuracy scores
-            accs_train = accuracy_score(y_train, train_predictions)
-            accs_test = accuracy_score(y_test, test_predictions)
-            #Area Under the Receiver Operating Characteristic Curve
-            test_ras = roc_auc_score(y_test, clf.predict_proba(X_test)[:,1])
-            #best parameters
-            bp = clf.best_params_
-            #storing computed values in results dictionary
-            self.results_dict[f'xgbc{i+1}'] = {'iterable_parameter': grid_key,
-                                        'classifier': deepcopy(clf),
-                                        'cv_results': df.copy(),
-                                        'cfm_train': cfm_train,
-                                        'cfm_test': cfm_test,
-                                        'train_accuracy': accs_train,
-                                        'test_accuracy': accs_test,
-                                        'test roc auc score': test_ras,
-                                        'best_params': bp}
-
-            #variable for measuring iteration time
-            elapsed_time = time.time() - loop_start
-            print(f'iteration #{i+1} finished in: {elapsed_time} seconds')
-
-        #stop time
-        t1 = time.time()
-
+        self.best_params = params
+        self.model = XGBClassifier()
+        self.model.set_params(**self.best_params)
+        self.model.fit(self.X_train, self.y_train)
 
     def train_test_split(
             self,
@@ -304,6 +171,7 @@ def plot_bar(
         ylabel,
         h_line = None
 ):
+    y_data = [round(v,2) for v in y_data]
     freq_series = pd.Series(y_data)
     x_labels = list(x_data)
     plt.figure(figsize=(12, 8))
