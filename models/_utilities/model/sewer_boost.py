@@ -9,6 +9,7 @@ from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,train_test_split
 from sklearn.metrics import accuracy_score,f1_score,roc_auc_score,confusion_matrix,roc_curve
+import seaborn as sns
 
 import matplotlib.pyplot as plt
 
@@ -41,25 +42,41 @@ class Model:
         self.response = response
         self.top_N = None # Will be filled later once assessed
         self.results_dict = {}
+        self.best_params = None
 
         self.predictors = [c for c in self.training_data.columns if c not in \
                            NUMERIC_META_COLS and c in self.training_data.select_dtypes(np.number)]
 
         self.train_test_split()
-        self.model = XGBClassifier(objective='binary:logistic',
-                          booster='gbtree',
-                          eval_metric='auc',
-                          tree_method='hist',
-                          grow_policy='lossguide')
-        self.params = {"objective": "multi:softprob", "tree_method": "gpu_hist", "num_class": 2}
-        self.model.fit(self.X_train, self.y_train)
-        self.assess_on_test()
         self.grid_search_for_params()
+        self.build_model()
+        self.assess_on_test()
+
+    def build_model(self):
+
+        best_auc = 0
+        for m in self.results_dict.keys():
+            if self.results_dict[m]['test roc auc score'] > best_auc:
+                self.best_params = self.results_dict[m]['best_params']
+
+        self.model = XGBClassifier(objective='binary:logistic',
+                            booster='gbtree',
+                            eval_metric='auc',
+                            tree_method='hist',
+                            grow_policy='lossguide')
+        self.model.set_params(**self.best_params)
+        self.model.fit(self.X_train, self.y_train)
 
     def grid_search_for_params(self):
+        xgbc0 = XGBClassifier(objective='binary:logistic',
+                            booster='gbtree',
+                            eval_metric='auc',
+                            tree_method='hist',
+                            grow_policy='lossguide')
+        self.params = {"objective": "multi:softprob", "tree_method": "gpu_hist", "num_class": 2}
+        xgbc0.fit(self.X_train, self.y_train)
 
         # Pull attributes from self for easier references
-        xgbc0 = self.model
         X_train = self.X_train
         X_test = self.X_test
         y_train = self.y_train
@@ -102,12 +119,12 @@ class Model:
                          'best_params': bp}
         params = deepcopy(default_params)
         #setting grid of selected parameters for iteration
-        param_grid = {'gamma': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4, 200],
-                    'learning_rate': [0.01, 0.03, 0.06, 0.1, 0.15, 0.2, 0.25, 0.300000012, 0.4, 0.5, 0.6, 0.7],
-                    'max_depth': [5,6,7,8,9,10,11,12,13,14],
-                    'n_estimators': [50,65,80,100,115,130,150],
-                    'reg_alpha': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4,200],
-                    'reg_lambda': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4,200]}
+        param_grid = {'gamma': [0,0.1,0.2,0.4,0.8],
+                    'learning_rate': [0.01, 0.03, 0.06, 0.1,],
+                    'max_depth': [5,6,7,8,9,10],
+                    'n_estimators': [100,115,130,150],
+                    'reg_alpha': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4],
+                    'reg_lambda': [0,0.1,0.2,0.4,0.8,1.6,3.2,6.4]}
         #start time
         t0 = time.time()
         #No. of jobs
