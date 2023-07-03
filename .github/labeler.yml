@@ -13,4 +13,4 @@ catalog:
 - 'warehouse/catalog.py'
 
 model:
-- 'models/*'
+- 'models/*.py'

@@ -40,7 +40,12 @@ class Model:
                            NUMERIC_META_COLS and c in self.training_data.select_dtypes(np.number)]
 
         self.train_test_split()
-        self.model = XGBClassifier(eta = 0.01, reg_lambda=1, min_child_weight=1)
+        self.model = XGBClassifier(objective='binary:logistic',
+                          booster='gbtree',
+                          eval_metric='auc',
+                          tree_method='hist',
+                          grow_policy='lossguide',
+                          use_label_encoder=False)
         self.params = {"objective": "multi:softprob", "tree_method": "gpu_hist", "num_class": 2}
         self.model.fit(self.X_train, self.y_train)
         self.assess_on_test()
