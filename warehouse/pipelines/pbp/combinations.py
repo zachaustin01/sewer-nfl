@@ -160,8 +160,8 @@ def pipe_epa_hhi_combo(api_data, trailing_weeks = 5):
     dfs = [temp_offense_epa, temp_team_hhi]
 
     df_final = ft.reduce(lambda left, right: pd.merge(left, right, on=['season','week','team']), dfs)
-
-    df_final['off_epa'] = ((df_final['off_epa'] + 70)/150) * .6
+    print(df_final.keys())
+    df_final['off_epa'] = ((df_final['total_off_epa_sum'] + 70)/150) * .6
 
     df_final['team_HHI'] = 1 - ((df_final['team_HHI'] - .12)/.5)
     df_final = df_final.rename(columns = {'team_HHI':'inv_team_hhi'})
@@ -188,9 +188,9 @@ def pipe_points_per_epa(api_data, trailing_weeks = 5):
 
     df_final = ft.reduce(lambda left, right: pd.merge(left, right, on=['season','week','team']), dfs)
 
-    df_final['off_epa'] = (df_final['off_epa'] + 70) / 150
+    df_final['off_epa'] = (df_final['total_off_epa_sum'] + 70) / 150
 
-    df_final['points_per_epa'] = df_final['posteam_score'] / df_final['off_epa']
+    df_final['points_per_epa'] = df_final['actual_off_points'] / df_final['off_epa']
 
     df_final = df_final.sort_values('points_per_epa')
 
