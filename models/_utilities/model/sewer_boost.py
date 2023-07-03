@@ -43,6 +43,7 @@ class Model:
                  training_data,
                  test_years = [2022],
                  response = 'home_cover', # Options: ['home_cover','spread_line','within_three']
+                 params = None
                  ):
 
         self.training_data = training_data
@@ -56,14 +57,14 @@ class Model:
                            NUMERIC_META_COLS and c in self.training_data.select_dtypes(np.number)]
 
         self.train_test_split()
-        self.build_model()
+        if params is not None: self.build_model(params=params)
+        else: self.build_model()
         self.assess_on_test()
 
     def assess_predictor_importance(self):
 
         return pd.DataFrame({'importance':self.model.feature_importances_,'feature':self.predictors})\
             .sort_values('importance',ascending=False)
-        return self.model.feature_importances_, self.predictors
 
     def build_model(self,
         params = {
@@ -170,6 +171,7 @@ def plot_bar(
         ylabel,
         h_line = None
 ):
+    y_data = [round(v,2) for v in y_data]
     freq_series = pd.Series(y_data)
     x_labels = list(x_data)
     plt.figure(figsize=(12, 8))

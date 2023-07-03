@@ -51,7 +51,6 @@ def select_variable_subset(FUNCTION_CATALOG, total_variables = 12, favor_pipes =
         freq_adjustment['adj_val'] = freq_adjustment['adj_val'] * 6
 
         # joining the defensive variables with the freq adjustment, and sampling the number of variables remaining after counterparts have been chosen
-        print(freq_adjustment.columns)
         mid_def_df = catalog_df[(catalog_df['ball_side'] == 'def') & (~catalog_df['output_columns'].isin(counterpart_variables))].merge(freq_adjustment, on = ['var_category'], how = 'left')
         mid_def_df['var_importance'] = mid_def_df['var_importance'] + mid_def_df['adj_val']
         def_variables = mid_def_df.sample(n = len(off_variables) - len(counterpart_variables), weights = 'var_importance')['output_columns'].tolist()
