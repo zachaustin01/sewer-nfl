@@ -10,18 +10,14 @@ cwd = str(os.getcwd())
 repo_dir = cwd[:cwd.find(REPO_NAME)+len(REPO_NAME)]
 sys.path.insert(0,repo_dir)
 
-# Import setups
-from warehouse.pipelines.pbp.setup import setup_pbp
-
 # Import pipelines
 from warehouse.pipelines.pbp.involvement import *
 from warehouse.pipelines.pbp.performance import *
 from warehouse.pipelines.pbp.combinations import *
 
-# Import config
-from warehouse.config import *
+def build_catalog(config):
 
-FUNCTION_CATALOG = {
+    FUNCTION_CATALOG = {
 ####################################################################################################
 # Team Performance Combinations (Higher Level Dependencies)
 ####################################################################################################
@@ -741,4 +737,6 @@ FUNCTION_CATALOG = {
         'var_importance':3, 
         'var_counterpart':'h2_first_drive_pts_avg'
     }
-}
+    }
+
+    return FUNCTION_CATALOG

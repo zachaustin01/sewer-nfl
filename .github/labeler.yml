@@ -11,3 +11,6 @@ test:
 catalog:
 - 'warehouse/config.py'
 - 'warehouse/catalog.py'
+
+model:
+- 'models/*.py'
