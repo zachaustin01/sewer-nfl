@@ -183,9 +183,7 @@ class Model:
 
     def register_model(self):
         '''
-
         Create pickle-able class from this class
-
         '''
         pk = Pickleable(model = self)
         with open(f'{repo_dir}/models/_registry/{pk.name}.pkl','wb') as file:
@@ -200,6 +198,11 @@ class Pickleable:
         self.test_years = model.test_years
         self.training_data = model.training_data
         self.best_params = model.best_params
+        self.test_accuracy_by_week_plot = model.get_test_accuracy_by_week()
+        self.test_accuracy_drop_off = model.get_test_accuracy_drop_off()
+        self.test_results = model.get_test_results()
+        self.predictor_importance = model.assess_predictor_importance()
+        self.comparison_row = model.comparison_row()
 
 def plot_bar(
         x_data,
