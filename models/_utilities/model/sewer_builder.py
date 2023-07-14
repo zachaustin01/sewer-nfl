@@ -1,5 +1,7 @@
 import sys,os
 import random
+import pandas as pd
+import numpy as np
 
 REPO_NAME = 'sewer-nfl'
 CWD = str(os.getcwd())
@@ -31,7 +33,9 @@ class Sewer:
             batch_size,
             var_selection_type="Random",
             param_selection_type="Fixed",
-            n_vars=list(range(8,10))
+            n_vars=list(range(8,10)),
+            model_promotion_acc_threshold = 6,
+            max_acc_slope_threshold = 0
     ):
         self.batch_size = batch_size
         self.var_selection_type = var_selection_type
@@ -39,7 +43,10 @@ class Sewer:
         self.n_vars = n_vars
         self.function_catalog = FUNCTION_CATALOG
         self.models = []
+        self.crs = None
         self.t = T
+        self.promotion_threshold = model_promotion_acc_threshold
+        self.max_slope = max_acc_slope_threshold
 
     def select_vars(self):
         '''
@@ -71,7 +78,18 @@ class Sewer:
                             'reg_lambda': 0.5
                         }
 
-    def generate(self, verbose):
+    def promote(self):
+        if self.crs is None:
+            print('Generate models before trying to promote')
+        else:
+            valid_crs = self.crs[(self.crs['Value']>self.promotion_threshold) &
+                            (self.crs['Slope']<self.max_slope)]
+            indices_to_promote = list(valid_crs.index)
+            for index in indices_to_promote:
+                model = self.models[index]
+                model.register_model()
+
+    def generate(self, verbose, auto_promote = False):
         for i in range(self.batch_size):
             if verbose and (i+1) % 5 == 0: print(i+1)
             try:
@@ -85,3 +103,12 @@ class Sewer:
                 if verbose: print(f'Failure generating model #{i}')
                 pass
             self.models.append(m)
+        if verbose: print('Assembling comparison rows')
+        crs = [x.comparison_row() for x in self.models]
+        left_scale_weight = 0.5
+        res = pd.DataFrame(crs)
+        # Value: assessed accuracy of the model based on its performance at differing values of top_N
+        res['Value'] = res.apply(lambda x: np.dot(x,[(a + 1)**left_scale_weight for a in list(x.index)]), axis=1)
+        # Slope: fitted slope of accuracy metrics at increasing values of N
+        res['Slope'] = res.apply(lambda x: np.polyfit(list(x.index[:-1]),list(x[:-1]),3)[0],axis = 1)
+        self.crs = res.sort_values('Value',ascending=False)

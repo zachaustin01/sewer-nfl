@@ -182,9 +182,24 @@ class Model:
         )
 
     def register_model(self):
-        with open(f'{repo_dir}/models/_registry/{self.model_name}.pkl','wb') as file:
-            pickle.dump(self,file)
-            print(f'Registered model as {self.model_name}')
+        '''
+
+        Create pickle-able class from this class
+
+        '''
+        pk = Pickleable(model = self)
+        with open(f'{repo_dir}/models/_registry/{pk.name}.pkl','wb') as file:
+            pickle.dump(pk,file)
+            print(f'Registered model as {pk.name}')
+
+class Pickleable:
+    def __init__(self,model):
+        self.name = model.model_name
+        self.model = model.model
+        self.predictors = model.predictors
+        self.test_years = model.test_years
+        self.training_data = model.training_data
+        self.best_params = model.best_params
 
 def plot_bar(
         x_data,
