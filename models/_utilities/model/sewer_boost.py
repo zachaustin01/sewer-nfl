@@ -1,6 +1,8 @@
 
 import pickle
-import time
+import random
+import string
+from datetime import datetime
 from copy import deepcopy
 import xgboost as xgb
 import numpy as np
@@ -9,6 +11,12 @@ from xgboost import XGBClassifier, plot_importance
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,train_test_split
 from sklearn.metrics import accuracy_score,f1_score,roc_auc_score,confusion_matrix,roc_curve
+
+REPO_NAME = 'sewer-nfl'
+import sys, os
+cwd = str(os.getcwd())
+repo_dir = cwd[:cwd.find(REPO_NAME)+len(REPO_NAME)]
+sys.path.insert(0,repo_dir)
 
 import warnings
 
@@ -46,6 +54,10 @@ class Model:
                  params = None
                  ):
 
+        letters = string.ascii_lowercase
+
+        self.model_name = f'{datetime.now().strftime("%Y%m%d%H%M%S")}_{"".join(random.choices(letters,k=5))}'
+
         self.training_data = training_data
         self.test_years = test_years
         self.response = response
@@ -60,6 +72,9 @@ class Model:
         if params is not None: self.build_model(params=params)
         else: self.build_model()
         self.assess_on_test()
+
+    def comparison_row(self):
+        return self.get_test_accuracy_drop_off_data()
 
     def assess_predictor_importance(self):
 
@@ -133,14 +148,17 @@ class Model:
         top_N = self.get_test_results(most_confident= most_confident, save = save)
         return round(sum(top_N['win'] / len(top_N['win'])),2)
 
-    def get_test_accuracy_drop_off(self, top_N_range = list(range(1,7)), threshold = 0.5):
+    def get_test_accuracy_drop_off_data(self, top_N_range = list(range(1,7)), threshold = 0.5):
         '''
         Return percentage of correct picks across various top N values
         '''
         accuracies = []
         for N in top_N_range:
             accuracies.append(self.get_test_accuracy(most_confident = N, save = False))
+        return accuracies
 
+    def get_test_accuracy_drop_off(self, top_N_range = list(range(1,7)), threshold = 0.5):
+        accuracies = self.get_test_accuracy_drop_off_data(top_N_range,threshold)
         return plot_bar(
             x_data=top_N_range,
             y_data=accuracies,
@@ -162,6 +180,29 @@ class Model:
             ylabel='Accuracy',
             h_line=threshold
         )
+
+    def register_model(self):
+        '''
+        Create pickle-able class from this class
+        '''
+        pk = Pickleable(model = self)
+        with open(f'{repo_dir}/models/_registry/{pk.name}.pkl','wb') as file:
+            pickle.dump(pk,file)
+            print(f'Registered model as {pk.name}')
+
+class Pickleable:
+    def __init__(self,model):
+        self.name = model.model_name
+        self.model = model.model
+        self.predictors = model.predictors
+        self.test_years = model.test_years
+        self.training_data = model.training_data
+        self.best_params = model.best_params
+        self.test_accuracy_by_week_plot = model.get_test_accuracy_by_week()
+        self.test_accuracy_drop_off = model.get_test_accuracy_drop_off()
+        self.test_results = model.get_test_results()
+        self.predictor_importance = model.assess_predictor_importance()
+        self.comparison_row = model.comparison_row()
 
 def plot_bar(
         x_data,

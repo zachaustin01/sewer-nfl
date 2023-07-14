@@ -28,6 +28,7 @@ def build_catalog(config):
             config.ngs['passing'],
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -42,6 +43,7 @@ def build_catalog(config):
             config.ngs['receiving'],
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -54,6 +56,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'full_measure',
@@ -65,6 +68,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'full_measure',
@@ -76,6 +80,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'coaching_aptitude',
@@ -88,6 +93,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'def',
         'var_category':'coaching_aptitude',
@@ -101,6 +107,7 @@ def build_catalog(config):
             config.ngs['rushing'],
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -112,6 +119,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -124,6 +132,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'def',
         'var_category':'scoring_success',
@@ -138,6 +147,7 @@ def build_catalog(config):
             config.ngs['passing'],
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -153,6 +163,7 @@ def build_catalog(config):
             config.ngs['rushing'],
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -166,6 +177,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'full_measure',
@@ -177,6 +189,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'pipeline',
         'ball_side':'off',
         'var_category':'coaching_aptitude',
@@ -192,6 +205,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_success',
@@ -205,6 +219,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_success',
@@ -217,6 +232,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_success',
@@ -229,6 +245,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_success',
@@ -241,6 +258,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_success',
@@ -252,6 +270,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_style',
@@ -263,6 +282,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_style',
@@ -274,6 +294,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ),
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_style',
@@ -285,6 +306,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_style',
@@ -296,6 +318,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'play_success',
@@ -308,6 +331,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'play_success',
@@ -320,6 +344,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'play_success',
@@ -332,6 +357,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'play_success',
@@ -344,6 +370,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -356,6 +383,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'scoring_success',
@@ -368,6 +396,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -381,6 +410,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'scoring_success',
@@ -393,6 +423,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -405,6 +436,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'scoring_success',
@@ -417,6 +449,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -428,6 +461,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -439,6 +473,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -451,6 +486,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -463,6 +499,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -474,6 +511,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'scoring_success',
@@ -485,6 +523,7 @@ def build_catalog(config):
             config.ngs['passing'],
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -497,6 +536,7 @@ def build_catalog(config):
             config.ngs['passing'],
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -509,6 +549,7 @@ def build_catalog(config):
             config.ngs['rushing'],
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -520,6 +561,7 @@ def build_catalog(config):
             config.ngs['receiving'],
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -531,6 +573,7 @@ def build_catalog(config):
             config.ngs['receiving'],
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -542,6 +585,7 @@ def build_catalog(config):
             config.ngs['passing'],
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -553,6 +597,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'boom_bust' ,
@@ -565,6 +610,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -577,6 +623,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -589,6 +636,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust' ,
@@ -601,6 +649,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_success',
@@ -613,6 +662,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'play_success',
@@ -625,6 +675,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_style',
@@ -637,6 +688,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'play_style',
@@ -649,6 +701,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'boom_bust',
@@ -661,6 +714,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'boom_bust',
@@ -672,6 +726,7 @@ def build_catalog(config):
         'params':[
             config.pbp_api_data
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'full_measure',
@@ -683,6 +738,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'coaching_aptitude',
@@ -695,6 +751,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'coaching_aptitude',
@@ -708,6 +765,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'play_style',
@@ -719,6 +777,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'off',
         'var_category':'coaching_aptitude',
@@ -731,6 +790,7 @@ def build_catalog(config):
             config.pbp_api_data,
             config.TRAILING_WEEKS
         ],
+        'agg_level':'team',
         'type':'warehouse',
         'ball_side':'def',
         'var_category':'coaching_aptitude',
